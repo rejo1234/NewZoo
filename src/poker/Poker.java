@@ -99,14 +99,14 @@ public class Poker {
 
         int strit = 1;
         int indexArray = 0;
-        int[] Arraysstrit = new int[hand1PlusBoard.length() /2];
+        int[] arraysstrit = new int[hand1PlusBoard.length() /2];
         for (int i = 0; i < hand1PlusBoard.length(); i = i + 2){
-            Arraysstrit[indexArray++] = hand1PlusBoard.charAt(i) - '0';
+            arraysstrit[indexArray++] = hand1PlusBoard.charAt(i) - '0';
         }
-        Arrays.sort(Arraysstrit);
+        Arrays.sort(arraysstrit);
 
-        for (int i = 1 ; i < Arraysstrit.length; i++){
-            if (Arraysstrit[i]  - Arraysstrit[i -1] == 1){
+        for (int i = 1 ; i < arraysstrit.length; i++){
+            if (arraysstrit[i]  - arraysstrit[i -1] == 1){
                 strit++;
                 if (strit == 5){
                     maxValueHandPlayer1.put(5, 5);
@@ -160,7 +160,7 @@ public class Poker {
         }
         Arrays.sort(Arraysstrit2);
 
-        for (int i = 1 ; i < Arraysstrit.length; i++){
+        for (int i = 1 ; i < arraysstrit.length; i++){
             if (Arraysstrit2[i]  - Arraysstrit2[i -1] == 1){
                 strit2++;
                 if (strit2 == 5){
