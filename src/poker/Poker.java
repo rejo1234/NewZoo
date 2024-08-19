@@ -13,12 +13,12 @@ public class Poker {
         // funkcja ktora przyjmie jednego handa i drugiego i boarda i zdecyduje ktory wygrywa
         Deck myDeck = new Deck();
         myDeck.printDeck();
-        List<Card> board = myDeck.getBoard("4d", "Td", "Jh", "6s", "6c");
+        List<Card> board = myDeck.getBoard("Ad", "Qh", "Jh", "5s", "9d");
         // dwa idenksy które karty
         // dwójki na AK
         //9 11
-        List<Card> hand = myDeck.getHand("Js", "6h");
-        List<Card> hand2 = myDeck.getHand2("Ts", "6s");
+        List<Card> hand = myDeck.getHand("Ts", "Ks");
+        List<Card> hand2 = myDeck.getHand2("8s", "As");
         System.out.println(hand);
         System.out.println(hand2);
         System.out.println(board);
@@ -64,6 +64,39 @@ public class Poker {
         for (int num : map1Color.values()) {
             maxApperancesFlush = Math.max(num,maxApperancesFlush);
         }
+        ArrayList<Integer> stritPoker = new ArrayList<>();
+        int maxStritFlushValue = 0;
+        int stritPokerStreak = 1;
+        for (int i = 1; i < hand1PlusBoard.length(); i = i + 2){
+            if (map1Color.get(hand1PlusBoard.charAt(i)) == maxApperancesFlush && maxApperancesFlush >= 5){
+                if (hand1PlusBoard.charAt(i -1) - '0' <= 9){
+                    stritPoker.add(hand1PlusBoard.charAt(i -1) - '0');
+                }
+                else {
+                    stritPoker.add(cardValuesToStrit.get(hand1PlusBoard.charAt(i -1)));
+                }
+            }
+        }
+        Collections.sort(stritPoker);
+        int saveMaxStritPokerStreak = 0;
+        int lastIndexStritPoker = stritPoker.size() -1;
+        for (int i = 0; i < stritPoker.size() -1; i++){
+            if (stritPoker.get(lastIndexStritPoker) - stritPoker.get(lastIndexStritPoker -1) == 1){
+                stritPokerStreak++;
+                lastIndexStritPoker--;
+                maxStritFlushValue = Math.max(maxStritFlushValue,stritPoker.get(stritPoker.size() -1));
+                saveMaxStritPokerStreak = Math.max(saveMaxStritPokerStreak,maxStritFlushValue);
+            }
+            else {
+                stritPokerStreak = 0;
+                lastIndexStritPoker--;
+                maxStritFlushValue = Math.max(maxStritFlushValue,stritPoker.get(lastIndexStritPoker));
+                saveMaxStritPokerStreak = Math.max(saveMaxStritPokerStreak,maxStritFlushValue);
+            }
+            if (maxApperancesFlush >= 5){
+                maxValueHandPlayer1.put(9, 9);
+            }
+        }
 
         for (int i = 1; i < hand1PlusBoard.length(); i = i + 2){
                 if (map1Color.get(hand1PlusBoard.charAt(i)) == maxApperancesFlush && maxApperancesFlush >= 5){
@@ -79,6 +112,40 @@ public class Poker {
 
         for (int num : map2Color.values()){
             maxApperancesFlush2 = Math.max(num,maxApperancesFlush2);
+        }
+
+        ArrayList<Integer> stritPoker2 = new ArrayList<>();
+        int maxStritFlushValue2 = 0;
+        int stritPokerStreak2 = 1;
+        int saveMaxStritPokerStreak2 = 0;
+        for (int i = 1; i < hand2PlusBoard.length(); i = i + 2){
+            if (map2Color.get(hand2PlusBoard.charAt(i)) == maxApperancesFlush2 && maxApperancesFlush2 >= 5){
+                if (hand2PlusBoard.charAt(i -1) - '0' <= 9){
+                    stritPoker2.add(hand2PlusBoard.charAt(i -1) - '0');
+                }
+                else {
+                    stritPoker2.add(cardValuesToStrit.get(hand2PlusBoard.charAt(i -1)));
+                }
+            }
+        }
+        Collections.sort(stritPoker2);
+        int lastIndexStritPoker2 = stritPoker2.size() -1;
+        for (int i = 0; i < stritPoker2.size() -1; i++){
+            if (stritPoker2.get(lastIndexStritPoker2) - stritPoker2.get(lastIndexStritPoker2 -1) == 1){
+                stritPokerStreak2++;
+                lastIndexStritPoker2--;
+                maxStritFlushValue2 = Math.max(maxStritFlushValue2,stritPoker2.get(stritPoker2.size() -1));
+                saveMaxStritPokerStreak2 = Math.max(saveMaxStritPokerStreak2,maxStritFlushValue2);
+            }
+            else {
+                stritPokerStreak2 = 0;
+                lastIndexStritPoker2--;
+                maxStritFlushValue2 = Math.max(maxStritFlushValue2,stritPoker2.get(lastIndexStritPoker2));
+                saveMaxStritPokerStreak2 = Math.max(saveMaxStritPokerStreak2,maxStritFlushValue2);
+            }
+            if (maxApperancesFlush2 >= 5){
+                maxValueHandPlayer2.put(9, 9);
+            }
         }
 
         for (int i = 1; i < hand2PlusBoard.length(); i = i + 2){
@@ -103,6 +170,9 @@ public class Poker {
         for (int i = 0; i < hand1PlusBoard.length(); i = i + 2) {
             appreances.put(hand1PlusBoard.charAt(i), appreances.getOrDefault(hand1PlusBoard.charAt(i), 0) + 1);
         }
+
+
+
         int valuePair = 0;
 
             int valueTrips = 0;
@@ -178,6 +248,89 @@ public class Poker {
             maxValueHandPlayer1.put(1, 1);
         }
 
+
+
+        int valuePairPairOne = 0;
+        ArrayList<Integer> kickersValuesPairOne = new ArrayList<>();
+        for (int i = 0; i < hand1PlusBoard.length(); i = i + 2){
+            if (appreances.get(hand1PlusBoard.charAt(i)) == 2 && checkPair == 1){
+                if (hand1PlusBoard.charAt(i) - '0' <= 9){
+                    valuePairPairOne = hand1PlusBoard.charAt(i) - '0';
+                }else {
+                    valuePairPairOne = cardValuesToStrit.get(hand1PlusBoard.charAt(i));
+                }
+            }
+            if (appreances.get(hand1PlusBoard.charAt(i)) != 2){
+                if (hand1PlusBoard.charAt(i) - '0' <= 9){
+                    kickersValuesPairOne.add(hand1PlusBoard.charAt(i) - '0');
+                }else {
+                    kickersValuesPairOne.add(cardValuesToStrit.get(hand1PlusBoard.charAt(i)));
+                }
+            }
+        }
+        Collections.sort(kickersValuesPairOne);
+        int lastIndexKickersValuesPairOne = kickersValuesPairOne.size() -1;
+
+
+
+        int valuePairTwoPair1 = 0;
+        int valuePairTwoPair2 = 0;
+        int valueKicerTwoPair = 0;
+        HashSet<Integer> checkValuepairs = new HashSet<>();
+        ArrayList<Integer> checkValuePairsList = new ArrayList<>();
+        int minValueThirdPair = 100;
+        //JsAh4dTdJh3sAc
+
+        for (int i = 0; i < hand1PlusBoard.length(); i = i + 2) {
+            if (appreances.get(hand1PlusBoard.charAt(i)) != 2){
+                if (hand1PlusBoard.charAt(i) - '0' <= 9){
+                    valueKicerTwoPair = Math.max(hand1PlusBoard.charAt(i) - '0',valueKicerTwoPair);
+                }else {
+                    valueKicerTwoPair = Math.max(cardValuesToStrit.get(hand1PlusBoard.charAt(i)),valueKicerTwoPair);
+                }
+
+            }
+
+            if (appreances.get(hand1PlusBoard.charAt(i)) == 2 && checkPair >= 2) {
+                if (!checkValuepairs.contains(hand1PlusBoard.charAt(i) - '0')){
+                    checkValuepairs.add(hand1PlusBoard.charAt(i) - '0');
+                    if (hand1PlusBoard.charAt(i) - '0' <= 9){
+                        minValueThirdPair = Math.min(minValueThirdPair,hand1PlusBoard.charAt(i) - '0');
+                    }else {
+                        minValueThirdPair = Math.min(minValueThirdPair,cardValuesToStrit.get(hand1PlusBoard.charAt(i)));
+                    }
+
+                    if (hand1PlusBoard.charAt(i) - '0' <= 9){
+                        checkValuePairsList.add(hand1PlusBoard.charAt(i) - '0');
+                    }else {
+                        checkValuePairsList.add(cardValuesToStrit.get(hand1PlusBoard.charAt(i)));
+                    }
+
+                    if (hand1PlusBoard.charAt(i) - '0' <= 9) {
+                        valuePairTwoPair1 = Math.max(hand1PlusBoard.charAt(i) - '0', valuePairTwoPair1);
+                    } else if (cardValuesToStrit.get(hand1PlusBoard.charAt(i)) > valuePairTwoPair1){
+                        valuePairTwoPair1 = cardValuesToStrit.get(hand1PlusBoard.charAt(i));
+                    }
+                    Collections.sort(checkValuePairsList);
+                    if (checkValuePairsList.size() -1 > 0){
+                        if (hand1PlusBoard.charAt(i) - '0' <= 9){
+                            valuePairTwoPair2 = checkValuePairsList.get(checkValuePairsList.size() -2);
+                        }else {
+                            valuePairTwoPair2 = checkValuePairsList.get(checkValuePairsList.size() -2);
+                        }
+                    }
+
+                }
+            }
+        }
+        if (checkPair == 3) {
+            if (minValueThirdPair > valueKicerTwoPair){
+                valueKicerTwoPair = minValueThirdPair;
+            }
+        }
+
+
+
         ArrayList<Integer> listStrit = new ArrayList<>();
         int strit = 1;
         int saveStrit = 0;
@@ -220,6 +373,21 @@ public class Poker {
 
             }
         }
+
+        ArrayList<Integer> hihgCards = new ArrayList<>();
+        for (int i = 0; i < hand1PlusBoard.length(); i = i + 2){
+            if (!set1.contains(2) && !set1.contains(3) && !set1.contains(4) && maxApperancesFlush < 5 && strit < 5 && checkPair < 1){
+                if (hand1PlusBoard.charAt(i) - '0' <= 9){
+                    hihgCards.add(hand1PlusBoard.charAt(i) - '0');
+                }
+                else {
+                    hihgCards.add(cardValuesToStrit.get(hand1PlusBoard.charAt(i)));
+                }
+            }
+        }
+        Collections.sort(hihgCards);
+        int lastIndexHighCards = hihgCards.size() -1;
+
 
 
 
@@ -308,11 +476,97 @@ public class Poker {
             maxValueHandPlayer2.put(1, 1);
         }
 
+        int valuePairPairOne2 = 0;
+        ArrayList<Integer> kickersValuesPairOne2 = new ArrayList<>();
+        for (int i = 0; i < hand2PlusBoard.length(); i = i + 2){
+            if (appreances2.get(hand2PlusBoard.charAt(i)) == 2 && checkPair2 == 1){
+                if (hand2PlusBoard.charAt(i) - '0' <= 9){
+                    valuePairPairOne2 = hand2PlusBoard.charAt(i) - '0';
+                }else {
+                    valuePairPairOne2 = cardValuesToStrit.get(hand2PlusBoard.charAt(i));
+                }
+            }
+            if (appreances2.get(hand2PlusBoard.charAt(i)) != 2){
+                if (hand2PlusBoard.charAt(i) - '0' <= 9){
+                    kickersValuesPairOne2.add(hand2PlusBoard.charAt(i) - '0');
+                }else {
+                    kickersValuesPairOne2.add(cardValuesToStrit.get(hand2PlusBoard.charAt(i)));
+                }
+            }
+        }
+        Collections.sort(kickersValuesPairOne2);
+        int lastIndexKickersValuesPairOne2 = kickersValuesPairOne2.size() -1;
+
+
+
+
+
+        int valuePairTwoPair3 = 0;
+        int valuePairTwoPair4 = 0;
+        int valueKicerTwoPair2 = 0;
+        HashSet<Integer> checkValuepairs2 = new HashSet<>();
+        ArrayList<Integer> checkValuePairsList2 = new ArrayList<>();
+        int minValueThirdPair2 = 100;
+//JsAh4dTdJh3sAc
+
+        for (int i = 0; i < hand2PlusBoard.length(); i = i + 2) {
+
+            if (appreances2.get(hand2PlusBoard.charAt(i)) != 2){
+                if (hand2PlusBoard.charAt(i) - '0' <= 9){
+                    valueKicerTwoPair2 = Math.max(hand2PlusBoard.charAt(i) - '0', valueKicerTwoPair2);
+                } else {
+                    valueKicerTwoPair2 = Math.max(cardValuesToStrit.get(hand2PlusBoard.charAt(i)), valueKicerTwoPair2);
+                }
+            }
+
+            if (appreances2.get(hand2PlusBoard.charAt(i)) == 2 && checkPair2 >= 2) {
+                if (!checkValuepairs2.contains(hand2PlusBoard.charAt(i) - '0')){
+                    checkValuepairs2.add(hand2PlusBoard.charAt(i) - '0');
+                    if (hand2PlusBoard.charAt(i) - '0' <= 9){
+                        minValueThirdPair2 = Math.min(minValueThirdPair2, hand2PlusBoard.charAt(i) - '0');
+                    } else {
+                        minValueThirdPair2 = Math.min(minValueThirdPair2, cardValuesToStrit.get(hand2PlusBoard.charAt(i)));
+                    }
+
+                    if (hand2PlusBoard.charAt(i) - '0' <= 9){
+                        checkValuePairsList2.add(hand2PlusBoard.charAt(i) - '0');
+                    } else {
+                        checkValuePairsList2.add(cardValuesToStrit.get(hand2PlusBoard.charAt(i)));
+                    }
+
+                    if (hand2PlusBoard.charAt(i) - '0' <= 9) {
+                        valuePairTwoPair3 = Math.max(hand2PlusBoard.charAt(i) - '0', valuePairTwoPair3);
+                    } else if (cardValuesToStrit.get(hand2PlusBoard.charAt(i)) > valuePairTwoPair3){
+                        valuePairTwoPair3 = cardValuesToStrit.get(hand2PlusBoard.charAt(i));
+                    }
+                    Collections.sort(checkValuePairsList2);
+                    if (checkValuePairsList2.size() - 1 > 0){
+                        if (hand2PlusBoard.charAt(i) - '0' <= 9){
+                            valuePairTwoPair4 = checkValuePairsList2.get(checkValuePairsList2.size() - 2);
+                        } else {
+                            valuePairTwoPair4 = checkValuePairsList2.get(checkValuePairsList2.size() - 2);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (checkPair2 == 3) {
+            if (minValueThirdPair2 > valueKicerTwoPair2){
+                valueKicerTwoPair2 = minValueThirdPair2;
+            }
+        }
+
+
+
+
+
         ArrayList<Integer> listStrit2 = new ArrayList<>();
         int strit2 = 1;
         int saveStrit2 = 0;
         int indexArray2 = 0;
         HashSet<Integer> AceValue2 = new HashSet<>();
+
         int[] arraysstrit2 = new int[hand2PlusBoard.length() /2];
         for (int i = 0; i < hand2PlusBoard.length(); i = i + 2){
             if (hand2PlusBoard.charAt(i) - '0' <= 9){
@@ -347,6 +601,20 @@ public class Poker {
             }
         }
 
+        ArrayList<Integer> hihgCards2 = new ArrayList<>();
+        for (int i = 0; i < hand2PlusBoard.length(); i = i + 2){
+            if (!set2.contains(2) && !set2.contains(3) && !set2.contains(4) && maxApperancesFlush2 < 5 && strit2 < 5 && checkPair2 < 1){
+                if (hand2PlusBoard.charAt(i) - '0' <= 9){
+                    hihgCards2.add(hand2PlusBoard.charAt(i) - '0');
+                }
+                else {
+                    hihgCards2.add(cardValuesToStrit.get(hand2PlusBoard.charAt(i)));
+                }
+            }
+        }
+        Collections.sort(hihgCards2);
+        int lastIndexHighCards2 = hihgCards2.size() -1;
+
 
 
         HashMap<Integer, String> arrangements = new HashMap<>();
@@ -358,6 +626,7 @@ public class Poker {
         arrangements.put(6, " z kolorem");
         arrangements.put(7, " z fullem");
         arrangements.put(8, " z czwórka");
+        arrangements.put(9, "z strit flushem");
 
 
         Collections.sort(listStrit);
@@ -382,6 +651,116 @@ public class Poker {
             System.out.println("gracz2 przegrał z" + arrangements.get(valueHand2));
 
         }else if (valueHand == valueHand2){
+            for (int i = 0; i < 2; i ++){
+                if (saveMaxStritPokerStreak >= 5 && saveMaxStritPokerStreak2 >= 5){
+                    if (saveMaxStritPokerStreak > saveMaxStritPokerStreak2){
+                        System.out.println("gracz1 wygrał ze strit flushem");
+                        break;
+                    }
+                    else if (saveMaxStritPokerStreak < saveMaxStritPokerStreak2){
+                        System.out.println("gracz2 wygrał ze strit flushem");
+                        break;
+                    }
+                    else if (saveMaxStritPokerStreak == 14){
+                        System.out.println("gracz1 wygrał z royal flsuehm");
+                        break;
+                    }
+                    else if (saveMaxStritPokerStreak2 == 14){
+                        System.out.println("gracz2 wygrał z royal flushem");
+                        break;
+                    }
+                    else {
+                        System.out.println("gracze remisują ze strit flushem");
+                        break;
+                    }
+                }
+            }
+
+            if (!set2.contains(2) && !set2.contains(3) && !set2.contains(4) && maxApperancesFlush2 < 5 && strit2 < 5 && checkPair2 < 1){
+                for (int i = 0; i < 5; i++){
+                    if (hihgCards.get(lastIndexHighCards) > hihgCards2.get(lastIndexHighCards2)){
+                        System.out.println("gracz1 wygrał z wyższa high carda");
+                        break;
+                    }
+                    else if (hihgCards.get(lastIndexHighCards) < hihgCards2.get(lastIndexHighCards2)){
+                        System.out.println("gracz2 wygrał z wyższą high carda");
+                        break;
+                    }
+                    else {
+                        lastIndexHighCards--;
+                        lastIndexHighCards2--;
+                    }
+                    if (i == 4){
+                        System.out.println("gracze remisują z high carda");
+                    }
+                }
+            }
+
+
+            if (checkPair == 1 && checkPair2 == 1){
+                for (int i = 0; i < 3; i++){
+                    if (valuePairPairOne > valuePairPairOne2){
+                        System.out.println("gracz1 wygrał z wyższą parą");
+                        break;
+                    }
+                    else if (valuePairPairOne < valuePairPairOne2){
+                        System.out.println("gracz2 wygrał z wyższa parą");
+                        break;
+                    }
+                    else if (kickersValuesPairOne.get(lastIndexKickersValuesPairOne) > kickersValuesPairOne2.get(lastIndexKickersValuesPairOne2)){
+                        System.out.println("gracz1 wygrał z parą z lepszym kickerem");
+                        break;
+                    }
+                    else if (kickersValuesPairOne.get(lastIndexKickersValuesPairOne) < kickersValuesPairOne2.get(lastIndexKickersValuesPairOne2)){
+                        System.out.println("gracz2 wygrał z parą z lepszym kickerem");
+                        break;
+                    }
+                    else{
+                        lastIndexKickersValuesPairOne--;
+                        lastIndexKickersValuesPairOne2--;
+                    }
+                    if (i == 2){
+                        System.out.println("gracze remisuą z parą");
+                    }
+                }
+            }
+
+
+
+
+            if (checkPair >= 2 && checkPair2 >= 2 && !set1.contains(3) && !set2.contains(3)){
+                for (int i = 0; i < 2; i++){
+                    if (valuePairTwoPair1 > valuePairTwoPair3){
+                        System.out.println("gracz1 wygrał z wyższymi parami");
+                        break;
+                    }
+                    else if (valuePairTwoPair2 > valuePairTwoPair4){
+                        System.out.println("gracz1 wygrał z wyższymi parami");
+                        break;
+                    }
+                    else if (valuePairTwoPair1 < valuePairTwoPair3){
+                        System.out.println("gracz2 wygrał z wyższymi parami");
+                        break;
+                    }
+                    else if (valuePairTwoPair2 < valuePairTwoPair4){
+                        System.out.println("gracz2 wygrał z wyższymi parami");
+                        break;
+                    }
+                    else if (valueKicerTwoPair > valueKicerTwoPair2){
+                        System.out.println("gracz1 wygrał z dwoma parami dzieki kickerowi");
+                        break;
+                    }
+                    else if (valueKicerTwoPair < valueKicerTwoPair2){
+                        System.out.println("gracz2 wygrał z dwoma parami dzieki kickerowi");
+                        break;
+                    }else {
+                        System.out.println("gracze remisują z dwoma parami");
+                        break;
+                    }
+                }
+            }
+
+
             if (set1.contains(3) && set2.contains(3) && !set1.contains(2) && !set2.contains(2)){
                 for (int i = 0; i < 2; i++){
                     if (valueTrips > valueTrips2 && set1.contains(3) && set2.contains(3)){
@@ -410,19 +789,25 @@ public class Poker {
                 }
             }
             if (set1.contains(3) && set1.contains(3) && set2.contains(3) && set2.contains(2)){
-                if (valueTrips > valueTrips2){
-                    System.out.println("gracz1 wygrywa z fullem z wieksza trojka");
-                }
-                else if (valueTrips < valueTrips2){
-                    System.out.println("gracz2 wygrywa z fullem z wieksza trojka");
-                }
-                else if (valuePair > valuePair2){
-                    System.out.println("gracz1 wygrywa z fullem z wieksza para");
-                }
-                else if (valuePair < valuePair2){
-                    System.out.println("gracz2 wygrywa z fullem z wieksza para");
-                }else {
-                    System.out.println("gracze remisują z fullem");
+                for (int i = 0; i < 2; i++){
+                    if (valueTrips > valueTrips2){
+                        System.out.println("gracz1 wygrywa z fullem z wieksza trojka");
+                        break;
+                    }
+                    else if (valueTrips < valueTrips2){
+                        System.out.println("gracz2 wygrywa z fullem z wieksza trojka");
+                        break;
+                    }
+                    else if (valuePair > valuePair2){
+                        System.out.println("gracz1 wygrywa z fullem z wieksza para");
+                        break;
+                    }
+                    else if (valuePair < valuePair2){
+                        System.out.println("gracz2 wygrywa z fullem z wieksza para");
+                        break;
+                    }else {
+                        System.out.println("gracze remisują z fullem");
+                    }
                 }
             }
 
@@ -450,7 +835,7 @@ public class Poker {
                 }
             }
 
-            if (saveStrit >= 5 && saveStrit2 >= 5){
+            if (saveStrit >= 5 && saveStrit2 >= 5 && stritPokerStreak2 < 5 && stritPokerStreak < 5){
                 for (int i = 0; i < 5; i++){
                     if (listStrit.get(checkBiggestStritValue1) > listStrit2.get(checkBiggestStritValue2)){
                         System.out.println("gracz1 wygrał z stritem");
@@ -471,7 +856,7 @@ public class Poker {
             }
 
 
-            if (listFlushValue.size() >= 5 && listFlushValue2.size() >= 5){
+            if (listFlushValue.size() >= 5 && listFlushValue2.size() >= 5 && saveMaxStritPokerStreak < 5 && saveMaxStritPokerStreak2 < 5){
                 for (int i = 0; i < 5; i++){
                     if (listFlushValue.get(checkBiggestFlushValue1) > listFlushValue2.get(checkBiggestFlushValue2)){
                         System.out.println("gracz 1 wygrał z flushem");
