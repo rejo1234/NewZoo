@@ -1,41 +1,106 @@
 package poker;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.HashMap;
 
-import java.util.*;
+public class EquityElevator {
+    private final List<Card> hand;
+    private final List<Card> hand2;
+    Deck deck;
+    Poker poker;
 
-public class Poker {
+    private List<Card> board;
 
-    public void init() {
-        HashMap<Integer, String> arrangements = new HashMap<>();
-        arrangements.put(9, " z high cardem");
-        arrangements.put(8, " z parą");
-        arrangements.put(7, " z dwoma parami");
-        arrangements.put(6, " z trójka");
-        arrangements.put(5, " z stritem");
-        arrangements.put(4, " z kolorem");
-        arrangements.put(3, " z fullem");
-        arrangements.put(2, " z czwórka");
-        arrangements.put(1, " z strit flushem");
-        Deck myDeck = new Deck();
-        myDeck.printDeck();
-        List<Card> board = myDeck.getBoard("2h", "3h", "4c", "6h", "9d");
-        List<Card> hand = myDeck.getHand("7h", "4d");
-        List<Card> hand2 = myDeck.getHand("8s", "As");
-        ResultHandOut bestHand = winningHand(hand, board);
-        ResultHandOut bestHand2 = winningHand(hand2,board);
-        System.out.println(bestHand.getBestHandValues());
-        System.out.println(bestHand2.getBestHandValues());
-        //System.out.println(bestHand2.getBestHandValues());
-        // System.out.println(hand);
-        //  System.out.println(hand2);
-        // System.out.println(board);
-        //  winningHand(hand, board);
-        //  calculateEquity(hand, hand2, board, myDeck.cardList);
-        decisionWhoWins(bestHand,bestHand2,arrangements);
-        EquityElevator myequityElevator = new EquityElevator(myDeck, hand, hand2, board);
-        myequityElevator.calculateEquity();
-
+    public EquityElevator(Deck deck, List<Card> hand, List<Card> hand2, List<Card> board){
+        this.deck = deck;
+        this.hand = hand;
+        this.hand2 = hand2;
+        this.board = board;
     }
+    public String indexToCard(int index) {
+        if (index >= 0 && index < deck.cardList.size()) {
+            Card card = deck.cardList.get(index);
+            return card.toString();
+        } else {
+            System.out.println("Index poza sizem");
+        }
+        return "XD";
+    }
+    public void calculateEquity(){
+        List<Card> deckWithoutHandAndBoard = new ArrayList<>(deck.cardList);
+        deckWithoutHandAndBoard.removeAll(hand);
+        deckWithoutHandAndBoard.removeAll(hand2);
+        System.out.println(deckWithoutHandAndBoard);
 
+        int winsPlayer1 = 0;
+        int winsPlayer2 = 0;
+        int ties = 0;
+        int index = 0;
+
+        for (int i = 0; i < deckWithoutHandAndBoard.size(); i++){
+            for (int j = i + 1; j < deckWithoutHandAndBoard.size(); j++){
+                for (int k = j + 1; k < deckWithoutHandAndBoard.size(); k++){
+                    for (int m = k + 1; m < deckWithoutHandAndBoard.size(); m++){
+                        for (int n = m + 1; n < deckWithoutHandAndBoard.size(); n++){
+                            List<Card> possibleBoard = new ArrayList<>();
+                            possibleBoard.add(deckWithoutHandAndBoard.get(i));
+                            possibleBoard.add(deckWithoutHandAndBoard.get(j));
+                            possibleBoard.add(deckWithoutHandAndBoard.get(k));
+                            possibleBoard.add(deckWithoutHandAndBoard.get(m));
+                            possibleBoard.add(deckWithoutHandAndBoard.get(n));
+                            index++;
+                            System.out.println(index);
+                            if (index == 45161){
+                                System.out.println("elo");
+                            }
+                            ResultHandOut resultPlayer1 = winningHand(hand, possibleBoard);
+                            ResultHandOut resultPlayer2 = winningHand(hand2, possibleBoard);
+
+                            if (resultPlayer1.getValue() > resultPlayer2.getValue()){
+                                winsPlayer1++;
+                            }
+                            else if (resultPlayer1.getValue() < resultPlayer2.getValue()){
+                                winsPlayer2++;
+                            }
+                            else {
+                                List<Integer> hand1Cards = resultPlayer1.getBestHandValues();
+                                List<Integer> hand2Cards = resultPlayer2.getBestHandValues();
+                                int checkStrongerHand1 = 0;
+                                int checkStrongerHand2 = 0;
+                                for (int y = 0; y < hand1Cards.size(); y++){
+                                    if (hand1Cards.get(y) > hand2Cards.get(y)){
+                                        checkStrongerHand1++;
+                                    }
+                                    else if (hand1Cards.get(y) < hand2Cards.get(y)){
+
+                                        checkStrongerHand2++;
+                                    }
+                                    else if (hand1Cards.get(y).equals(hand2Cards.get(y))){
+                                        checkStrongerHand1++;
+                                        checkStrongerHand2++;
+                                    }
+
+                                }
+                                if (checkStrongerHand1 > checkStrongerHand2){
+                                    winsPlayer1++;
+                                }
+                                else if (checkStrongerHand1 < checkStrongerHand2){
+                                    winsPlayer2++;
+                                }
+                                else{
+                                    ties++;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        System.out.println(winsPlayer1);
+        System.out.println(winsPlayer2);
+        System.out.println(ties);
+    }
     public void decisionWhoWins(ResultHandOut bestHand, ResultHandOut bestHand2, HashMap<Integer, String> arrangements) {
         if (bestHand.getValue() > bestHand2.getValue()){
             System.out.println("gracz2 wygrał z" + arrangements.get(bestHand2.getValue()));
@@ -165,6 +230,8 @@ public class Poker {
             listFlushValue.add(1);
         }
         Collections.sort(listFlushValue);
+
+
         return listFlushValue;
     }
 
@@ -298,7 +365,7 @@ public class Poker {
         for (Card card : handPlusBoard) {
             allCards.add(card.getValue());
         }
-        allCards.sort(Collections.reverseOrder());
+        Collections.sort(allCards);
         List<Integer> resultHighCards = new ArrayList<>();
         for (int i = 0; i < 5; i++){
             resultHighCards.add(allCards.get(i));

@@ -61,14 +61,7 @@ public class Deck {
         hand1.add(cardList.get(cardIndexHand2));
         return hand1;
     }
-    public List<Card> getHand2(String index1, String index2){
-        ArrayList<Card> hand2 = new ArrayList<>();
-        int cardIndexHand1 = cardIndex.get(index1);
-        int cardIndexHand2 = cardIndex.get(index2);
-        hand2.add(cardList.get(cardIndexHand1));
-        hand2.add(cardList.get(cardIndexHand2));
-        return hand2;
-    }
+
     public void printDeck(){
         for (int i = 0; i < cardList.size(); i++){
             Card myCard = cardList.get(i);

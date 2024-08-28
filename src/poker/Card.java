@@ -18,6 +18,7 @@ public class Card {
     public int getValue() {
         return value;
     }
+    public String getSuit(){return suit; };
     public String toString(){
         String valueString = map.getOrDefault(value,String.valueOf(value));
         return valueString + suit;
