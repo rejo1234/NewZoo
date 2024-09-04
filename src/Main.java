@@ -2,6 +2,7 @@ import Animals.Zoo;
 import Refriegerator.Refriegerator;
 import leetCode.*;
 import poker.Poker;
+import poker.pokerTest.Console;
 import pokerResult.ResultPoker;
 
 import java.io.IOException;
@@ -11,6 +12,7 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args) throws IOException {
         startPoker();
+       // startConsole();
 //        startRevision();
         //starFileTutorial();
         //startZoo();
@@ -39,7 +41,14 @@ public class Main {
 //        numArray.sumRange(0,2);
 //        numArray.sumRange(2, 5);
 //        numArray.sumRange(0, 5);
+        //sprawdzić jego wyniki 22 vs AA Ak vs 9T margines błędu 0.5% na wszystkich jeśli źle liczy znaleźć inny projekt
+        //jeśli liczby dobrze użyć jego kodu do znalezenie błedów w swoim ( złe przydzielanie mocy handa)
     }
+    public static void startConsole(){
+        Console myConsole = new Console();
+
+    }
+
     public static void startPoker(){
         Poker myPoker = new Poker();
         myPoker.init();

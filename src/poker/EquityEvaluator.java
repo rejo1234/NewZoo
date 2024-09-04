@@ -4,29 +4,21 @@ import java.util.Collections;
 import java.util.List;
 import java.util.HashMap;
 
-public class EquityElevator {
-    private final List<Card> hand;
-    private final List<Card> hand2;
+public class EquityEvaluator {
+    public final List<Card> hand;
+    public final List<Card> hand2;
     Deck deck;
     Poker poker;
 
     private List<Card> board;
 
-    public EquityElevator(Deck deck, List<Card> hand, List<Card> hand2, List<Card> board){
+    public EquityEvaluator(Deck deck, List<Card> hand, List<Card> hand2, List<Card> board){
         this.deck = deck;
         this.hand = hand;
         this.hand2 = hand2;
         this.board = board;
     }
-    public String indexToCard(int index) {
-        if (index >= 0 && index < deck.cardList.size()) {
-            Card card = deck.cardList.get(index);
-            return card.toString();
-        } else {
-            System.out.println("Index poza sizem");
-        }
-        return "XD";
-    }
+
     public void calculateEquity(){
         List<Card> deckWithoutHandAndBoard = new ArrayList<>(deck.cardList);
         deckWithoutHandAndBoard.removeAll(hand);
@@ -50,12 +42,13 @@ public class EquityElevator {
                             possibleBoard.add(deckWithoutHandAndBoard.get(m));
                             possibleBoard.add(deckWithoutHandAndBoard.get(n));
                             index++;
-                            System.out.println(index);
+                 //           System.out.println(index);
                             if (index == 45161){
                                 System.out.println("elo");
                             }
                             ResultHandOut resultPlayer1 = winningHand(hand, possibleBoard);
                             ResultHandOut resultPlayer2 = winningHand(hand2, possibleBoard);
+                            if (resultPlayer1.getValue() !=)
 
                             if (resultPlayer1.getValue() > resultPlayer2.getValue()){
                                 winsPlayer1++;
@@ -97,9 +90,47 @@ public class EquityElevator {
                 }
             }
         }
-        System.out.println(winsPlayer1);
-        System.out.println(winsPlayer2);
-        System.out.println(ties);
+        // sprawdzić na necie jak się prinutuje czas wykonania tej funckcji (obliczania jaki jest procent na wina gracza)
+        // doliczyć remisy pokerequliab i porównać obliczenia swoje a z tym z neta
+        // poszukać projektów w java które robią coś podobnego (na githubie szukać) GitClone (na YT żeby pobrać) otworze w
+        // intelij ogarnąć jak to odpalić itp, wkładam swój kod do jego projektu lub na odwrót
+     //   System.out.println("obliczyłem");
+     //   System.out.println(winsPlayer1);
+      //  System.out.println(winsPlayer2);
+      //  System.out.println(ties);
+        int total = winsPlayer1 + winsPlayer2 + ties;
+        double equityPlayer1 = (double) winsPlayer1 / total;
+        double equityPlayer2 = (double) winsPlayer2 / total;
+        double equityFromTies = (double)  ties / total;
+
+        double finalEquityPlayer1 = equityPlayer1 + equityFromTies /2;
+        double finalEquityPlayer2 = equityPlayer2 + equityFromTies /2;
+        System.out.println("Equity gracza1  "  + finalEquityPlayer1);
+        System.out.println("Equity gracza2  "  + finalEquityPlayer2);
+
+
+
+        //List<Card> hand = myDeck.getHand("Ah", "Ad");Equity gracza1  0.8222438889356096   Labs 17,8
+        // List<Card> hand2 = myDeck.getHand("2s", "2h");Equity gracza2  0.17775611106439043 Labs 82,2
+
+//        List<Card> hand = myDeck.getHand("Ah", "Kd"); Equity gracza1  0.47189751352563564 Labs 45
+//        List<Card> hand2 = myDeck.getHand("6s", "6h");Equity gracza2  0.5281024864743644 Labs 55
+
+//        List<Card> hand = myDeck.getHand("Jh", "Td"); Equity gracza1  0.6800731645782525 Labs 73,4
+//        List<Card> hand2 = myDeck.getHand("9s", "Th");Equity gracza2  0.31992683542174755 Labs 26,6
+
+  //      List<Card> hand = myDeck.getHand("Ah", "Kd");Equity gracza1  0.6109890533456677 Labs 63,1
+   //     List<Card> hand2 = myDeck.getHand("9s", "Th");Equity gracza2  0.3890109466543324 Labs 36.9
+    }
+    public  void countTime() {
+        long startTime = System.currentTimeMillis();
+
+        calculateEquity();
+
+        long endTime = System.currentTimeMillis();
+
+        long duration = endTime - startTime;
+        System.out.println("Zajeło to" + duration);
     }
     public void decisionWhoWins(ResultHandOut bestHand, ResultHandOut bestHand2, HashMap<Integer, String> arrangements) {
         if (bestHand.getValue() > bestHand2.getValue()){
@@ -131,10 +162,10 @@ public class EquityElevator {
         List<Integer> listFlushValue = checkFlush(handPlusBoard);
         List<Integer> straightFlushList = new ArrayList<>();
         int streakStraightFlush = 1;
+
         if (listFlushValue.size() >= 5) {
-            //51011121314
             for (int i = listFlushValue.size() - 1; i > 0; i--) {
-                if (listFlushValue.get(i - 1) - listFlushValue.get(i) == -1) {
+                if (listFlushValue.get(i - 1) - listFlushValue.get(i) == 1) {
                     streakStraightFlush++;
                 } else {
                     streakStraightFlush = 1;
@@ -229,8 +260,7 @@ public class EquityElevator {
         if (listFlushValue.contains(14)) {
             listFlushValue.add(1);
         }
-        Collections.sort(listFlushValue);
-
+        listFlushValue.sort(Collections.reverseOrder());
 
         return listFlushValue;
     }
@@ -378,8 +408,10 @@ public class EquityElevator {
         List<Card> hand1PlusBoard = new ArrayList<>();
         hand1PlusBoard.addAll(hand);
         hand1PlusBoard.addAll(board);
+        int xd = 1;
 
         List<Integer> bestHandValues = checkStraightFlush(hand1PlusBoard);
+
         if (bestHandValues.size() >= 5) {
             return new ResultHandOut(9, bestHandValues);
         }
@@ -395,7 +427,7 @@ public class EquityElevator {
 
         bestHandValues = checkFlush(hand1PlusBoard);
         if (bestHandValues.size() >= 5) {
-            return new ResultHandOut(6, bestHandValues);
+            return new ResultHandOut(6, bestHandValues.subList(0,5));
         }
 
         bestHandValues = checkStraight(hand1PlusBoard);
@@ -420,6 +452,5 @@ public class EquityElevator {
         bestHandValues = highCards(hand1PlusBoard);
 
         return new ResultHandOut(1, bestHandValues);
-
     }
 }
