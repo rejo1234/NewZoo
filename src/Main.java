@@ -21,7 +21,7 @@ public class Main {
         //startLists();
         //startKalkulator2();
         //startResultPoker();
-//        startLeetCode();
+      //  startLeetCode();
 //        startKolos();
 //        startStack();
 //        HashMap<String, String> capitalCities = new HashMap<String, String>();
@@ -753,7 +753,10 @@ public class Main {
 //        int target = 9;
 //        myleetcode.zadanie704(nums,target);
 //        String s = "Hello";
-//        myleetcode.zadanie706(s);
+//        myleetcode.zadanie709(s);
+//        int[] nums = {2,1,-1};
+//        System.out.println(myleetcode.zadanie724(nums));
+
     }
 
     public static void startResultPoker() throws IOException {

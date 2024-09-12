@@ -5,9 +5,34 @@ import java.lang.reflect.Array;
 import java.util.*;
 
 public class Leetcode {
-    public String zadanie706(String s){
+    public int zadanie724(int[] nums){
+        int left = 0;
+        int right = 0;
+        for (int i = 0; i < nums.length; i++){
+            left = left + nums[i];
+            for (int j = i + 1; j < nums.length; j++){
+                right = right + nums[j];
+                if (left == right){
+                    return i + 1;
+                }
+                if (j == nums.length -1){
+                    right = 0;
+                }
+            }
+        }
+        return -1;
+    }
 
-        return s.toLowerCase();
+    public String zadanie709(String s){
+        StringBuilder result = new StringBuilder();
+        for (char c : s.toCharArray()) {
+            if (c >= 'A' && c <= 'Z') {
+                result.append((char) (c + 32));
+            } else {
+                result.append(c);
+            }
+        }
+        return result.toString();
     }
     public int zadanie704(int[] nums, int target){
         int left = 0;

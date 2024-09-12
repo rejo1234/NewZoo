@@ -385,17 +385,6 @@ public class HandRanking implements Comparable<HandRanking> {
 		return ranking;
 	}
 
-
-
-
-
-
-
-
-
-
-
-
 	@Override
 	public int compareTo(HandRanking hr) {
 		int cmp = this.mRank.compareTo(hr.getRank());
