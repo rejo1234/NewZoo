@@ -4,6 +4,7 @@ import poker.pokerTest.CardRank;
 import poker.pokerTest.HandRanking;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static poker.pokerTest.Card.Suit.*;
 import static poker.pokerTest.HandRanking.Ranking.*;
@@ -31,14 +32,17 @@ public class EquityEvaluator {
         int winsPlayer2 = 0;
         int ties = 0;
         int index = 0;
-        HashMap<Integer, Character> cardMap = new HashMap<>();
-        cardMap.put(10, 'T');
-        cardMap.put(11, 'J');
-        cardMap.put(12, 'Q');
-        cardMap.put(13, 'K');
-        cardMap.put(14, 'A');
-        cardMap.put(1,'A');
 
+        HashMap<Integer, List<Integer>> testIndexListMap = new HashMap<>();
+        testIndexListMap.put(1, List.of(0, 1, 2, 3, 4));
+        testIndexListMap.put(2, List.of(0, 0, 1, 2, 3));
+        testIndexListMap.put(3, List.of(0, 0, 1, 1, 2));
+        testIndexListMap.put(4, List.of(0, 0, 0, 1, 2));
+        testIndexListMap.put(5, List.of(0, 1, 2, 3, 4));
+        testIndexListMap.put(6, List.of(0, 1, 2, 3, 4));
+        testIndexListMap.put(7, List.of(0, 0, 0, 1, 1));
+        testIndexListMap.put(8, List.of(0, 0, 0, 0, 1));
+        testIndexListMap.put(9, List.of(0, 1, 2, 3, 4));
         HashMap<Integer, HandRanking.Ranking> handsValue = new HashMap<>();
         handsValue.put(1, HIGH_CARD);
         handsValue.put(2, HandRanking.Ranking.PAIR);
@@ -84,138 +88,22 @@ public class EquityEvaluator {
                             poker.pokerTest.Card otherCard4 = new poker.pokerTest.Card(mapSuit.get(board4.getSuit()), new CardRank(board4.getValue()));
                             poker.pokerTest.Card otherCard5 = new poker.pokerTest.Card(mapSuit.get(board5.getSuit()), new CardRank(board5.getValue()));
                             HandRanking handRanking = HandRanking.evaluate(otherPlayerCard1a, otherPlayerCard1b, otherCard1, otherCard2, otherCard3, otherCard4, otherCard5);
-                            List<Integer> resultPlayer11 = resultPlayer1.getBestHandValues();
-                            List<CardRank> resultPLater22 = handRanking.getHighCardsRanks();
+                            List<Integer> player1Values = resultPlayer1.getBestHandValues();
+                            List<Integer> player1ValuesTest = handRanking.getHighCardsRanks().stream()
+                                    .map(cardRank -> cardRank.getValue())
+                                    .collect(Collectors.toList());
 
-
-                            StringBuilder StringBuilderPlayer1 = new StringBuilder();
-                            for (int z = 0; z < resultPlayer11.size(); z++){
-                                if (cardMap.containsKey(resultPlayer11.get(z))){
-                                    StringBuilderPlayer1.append(cardMap.get(resultPlayer11.get(z)));
-                                }else {
-                                    StringBuilderPlayer1.append(resultPlayer11.get(z));
-                                }
-                            }
-
-                            String player1 = StringBuilderPlayer1.toString();
-                            String player2Test = resultPLater22.toString();
-                            String player2 = player2Test.replaceAll("[\\[\\], ]", "");
-                            if (resultPlayer1.getValue() != 3 && resultPlayer1.getValue() != 7){
+                            if (resultPlayer1.getValue() != 3 && resultPlayer1.getValue() != 7) {
                                 if (handsValue.get(resultPlayer1.getValue()).equals(handRanking.getRank())) {
-                                    if (resultPlayer1.getValue() == 1 &&
-                                            (player1.charAt(0) != player2.charAt(0) ||
-                                                    player1.charAt(1) != player2.charAt(1) ||
-                                                    player1.charAt(2) != player2.charAt(2) ||
-                                                    player1.charAt(3) != player2.charAt(3) ||
-                                                    player1.charAt(4) != player2.charAt(4))) {
-                                        System.out.println(index);
-                                        System.out.println(resultPlayer1.getBestHandValues());
-                                        System.out.println(handRanking.getHighCardsRanks());
-                                        System.out.println("***************************************************************************");
+                                    for (int p = 0; p < 5; p++) {
+                                        int testIndex = testIndexListMap.get(resultPlayer1.getValue()).get(p);
+                                        if (!player1Values.get(p).equals(player1ValuesTest.get(testIndex))){
+                                            System.out.println(index);
+                                            System.out.println(resultPlayer1.getBestHandValues());
+                                            System.out.println(handRanking.getHighCardsRanks());
+                                            System.out.println("***************************************************************************");
+                                        }
                                     }
-
-                                    if (resultPlayer1.getValue() == 2 &&
-                                            (player1.charAt(0) != player2.charAt(0) ||
-                                                    player1.charAt(1) != player2.charAt(0) ||
-                                                    player1.charAt(2) != player2.charAt(1) ||
-                                                    player1.charAt(3) != player2.charAt(2) ||
-                                                    player1.charAt(4) != player2.charAt(3))) {
-                                        System.out.println(index);
-                                        System.out.println(resultPlayer1.getBestHandValues());
-                                        System.out.println(handRanking.getHighCardsRanks());
-                                        System.out.println("***************************************************************************");
-                                    }
-                                    if (resultPlayer1.getValue() == 3 &&
-                                            (player1.charAt(0) != player2.charAt(0) ||
-                                                    player1.charAt(1) != player2.charAt(0) ||
-                                                    player1.charAt(2) != player2.charAt(1) ||
-                                                    player1.charAt(3) != player2.charAt(1) ||
-                                                    player1.charAt(4) != player2.charAt(2))) {
-                                        System.out.println(index);
-                                        System.out.println(resultPlayer1.getBestHandValues());
-                                        System.out.println(handRanking.getHighCardsRanks());
-                                        System.out.println("***************************************************************************");
-                                    }
-
-                                    if (resultPlayer1.getValue() == 4 &&
-                                            (player1.charAt(0) != player2.charAt(0) ||
-                                                    player1.charAt(1) != player2.charAt(0) ||
-                                                    player1.charAt(2) != player2.charAt(0) ||
-                                                    player1.charAt(3) != player2.charAt(1) ||
-                                                    player1.charAt(4) != player2.charAt(2))) {
-                                        System.out.println(index);
-                                        System.out.println(resultPlayer1.getBestHandValues());
-                                        System.out.println(handRanking.getHighCardsRanks());
-                                        System.out.println("***************************************************************************");
-                                    }
-                                    if (resultPlayer1.getValue() == 5 &&
-                                            (player1.charAt(0) != player2.charAt(0) ||
-                                                    player1.charAt(1) != player2.charAt(1) ||
-                                                    player1.charAt(2) != player2.charAt(2) ||
-                                                    player1.charAt(3) != player2.charAt(3) ||
-                                                    player1.charAt(4) != player2.charAt(4))) {
-                                        System.out.println(index);
-                                        System.out.println(resultPlayer1.getBestHandValues());
-                                        System.out.println(handRanking.getHighCardsRanks());
-                                        System.out.println("***************************************************************************");
-                                    }
-                                    if (resultPlayer1.getValue() == 6 &&
-                                            (player1.charAt(0) != player2.charAt(0) ||
-                                                    player1.charAt(1) != player2.charAt(1) ||
-                                                    player1.charAt(2) != player2.charAt(2) ||
-                                                    player1.charAt(3) != player2.charAt(3) ||
-                                                    player1.charAt(4) != player2.charAt(4))) {
-                                        System.out.println(index);
-                                        System.out.println(resultPlayer1.getBestHandValues());
-                                        System.out.println(handRanking.getHighCardsRanks());
-                                        System.out.println("***************************************************************************");
-                                    }
-                                    if (resultPlayer1.getValue() == 7 &&
-                                            (player1.charAt(0) != player2.charAt(0) ||
-                                                    player1.charAt(1) != player2.charAt(0) ||
-                                                    player1.charAt(2) != player2.charAt(0) ||
-                                                    player1.charAt(3) != player2.charAt(1) ||
-                                                    player1.charAt(4) != player2.charAt(1))) {
-                                        System.out.println(index);
-                                        System.out.println(resultPlayer1.getBestHandValues());
-                                        System.out.println(handRanking.getHighCardsRanks());
-                                        System.out.println("***************************************************************************");
-                                    }
-                                    if (resultPlayer1.getValue() == 8 &&
-                                            (player1.charAt(0) != player2.charAt(0) ||
-                                                    player1.charAt(1) != player2.charAt(0) ||
-                                                    player1.charAt(2) != player2.charAt(0) ||
-                                                    player1.charAt(3) != player2.charAt(0) ||
-                                                    player1.charAt(4) != player2.charAt(1))) {
-                                        System.out.println(index);
-                                        System.out.println(resultPlayer1.getBestHandValues());
-                                        System.out.println(handRanking.getHighCardsRanks());
-                                        System.out.println("***************************************************************************");
-                                    }
-                                    if (resultPlayer1.getValue() == 9 &&
-                                            (player1.charAt(0) != player2.charAt(0) ||
-                                                    player1.charAt(1) != player2.charAt(1) ||
-                                                    player1.charAt(2) != player2.charAt(2) ||
-                                                    player1.charAt(3) != player2.charAt(3) ||
-                                                    player1.charAt(4) != player2.charAt(4))) {
-                                        System.out.println(index);
-                                        System.out.println(resultPlayer1.getBestHandValues());
-                                        System.out.println(handRanking.getHighCardsRanks());
-                                        System.out.println("***************************************************************************");
-                                    }
-                                    // System.out.println(handRanking.getHighCardRank(0));
-                                    // System.out.println(handRanking.getHighCardsRanks().get(1));
-                                    // System.out.println(resultPLater22.get(0));
-                                    // System.out.println(resultPLater22.get(1));
-                                    //   resultPLater22.get(0).toString();
-                                    //  String hand2 = resultPLater22.get(1).toString();
-                                    //   System.out.println(hand1);
-                                    // System.out.println(hand2);
-                                    //   System.out.println(resultPlayer1.getValue());
-                                    // System.out.println(handRanking.getRank());
-                                    //  System.out.println(resultPlayer1.getBestHandValues());
-                                    //  System.out.println(handRanking.getHighCardsRanks());
-                                    //  System.out.println("***********************************************************************");
                                 }
                             }
                         }
@@ -373,25 +261,19 @@ public class EquityEvaluator {
         System.out.println("Equity gracza2  " + finalEquityPlayer2);
 
 
-        //List<Card> hand = myDeck.getHand("Ah", "Ad");Equity gracza1  0.8222438889356096   Labs 17,8
-        // List<Card> hand2 = myDeck.getHand("2s", "2h");Equity gracza2  0.17775611106439043 Labs 82,2
-        //Equity gracza1  0.8221711798839458
-        //Equity gracza2  0.17782882011605416
+        //List<Card> hand = myDeck.getHand("Ah", "Ad");Equity gracza1  0.17782882011605416   Labs 17,8
+        // List<Card> hand2 = myDeck.getHand("2s", "2h");Equity gracza2  0.8221711798839458 Labs 82,2
 
-//        List<Card> hand = myDeck.getHand("Ah", "Kd"); Equity gracza1  0.47189751352563564 Labs 45
-//        List<Card> hand2 = myDeck.getHand("6s", "6h");Equity gracza2  0.5281024864743644 Labs 55
-        //Equity gracza1  0.4699288210504677
-        //Equity gracza2  0.5300711789495324
 
-//        List<Card> hand = myDeck.getHand("Jh", "Td"); Equity gracza1  0.6800731645782525 Labs 73,4
-//        List<Card> hand2 = myDeck.getHand("9s", "Th");Equity gracza2  0.31992683542174755 Labs 26,6
-        //Equity gracza1  0.7332731220624376
-        //Equity gracza2  0.2667268779375625
+//        List<Card> hand = myDeck.getHand("Ah", "Kd"); Equity gracza1  0.4699288210504677 Labs 45
+//        List<Card> hand2 = myDeck.getHand("6s", "6h");Equity gracza2  0.5300711789495324 Labs 55
 
-        //      List<Card> hand = myDeck.getHand("Ah", "Kd");Equity gracza1  0.6109890533456677 Labs 63,1
-        //     List<Card> hand2 = myDeck.getHand("9s", "Th");Equity gracza2  0.3890109466543324 Labs 36.9
-        //Equity gracza1  0.6330680766966613
-        //Equity gracza2  0.3669319233033387
+
+//        List<Card> hand = myDeck.getHand("Jh", "Td"); Equity gracza1  0.7332731220624376 Labs 73,4
+//        List<Card> hand2 = myDeck.getHand("9s", "Th");Equity gracza2  0.2667268779375625 Labs 26,6
+
+        //      List<Card> hand = myDeck.getHand("Ah", "Kd");Equity gracza1  0.6330680766966613 Labs 63,1
+        //     List<Card> hand2 = myDeck.getHand("9s", "Th");Equity gracza2  0.3669319233033387 Labs 36.9
     }
 
     public void countTime() {
@@ -443,7 +325,7 @@ public class EquityEvaluator {
                     streakStraightFlush = 1;
                     straightFlushList.clear();
                 }
-                if (i == 1 && listFlushValue.get(1) - listFlushValue.get(0) == -1){
+                if (i == 1 && listFlushValue.get(1) - listFlushValue.get(0) == -1) {
                     straightFlushList.add(listFlushValue.get(0));
                 }
             }
@@ -451,11 +333,11 @@ public class EquityEvaluator {
 
 
             List<Integer> resultStraightFlushList = new ArrayList<>();
-            if (straightFlushList.size() >= 5){
-                for (int j = 0; j < 5; j++){
+            if (straightFlushList.size() >= 5) {
+                for (int j = 0; j < 5; j++) {
                     resultStraightFlushList.add(straightFlushList.get(j));
 
-                    if (j == 4){
+                    if (j == 4) {
                         return resultStraightFlushList;
                     }
                 }
@@ -572,8 +454,8 @@ public class EquityEvaluator {
                 resultStraightList.clear();
             }
             if (streakStraight == 5) {
-                resultStraightList.add(straightList.get(i -1));
-               return resultStraightList;
+                resultStraightList.add(straightList.get(i - 1));
+                return resultStraightList;
             }
         }
         resultStraightList.sort(Comparator.reverseOrder());

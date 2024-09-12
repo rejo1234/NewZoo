@@ -144,7 +144,7 @@ public class HandRanking implements Comparable<HandRanking> {
 			HashMap<Integer, Integer> rankCounts = new HashMap<Integer, Integer>();
 
 			for(int i = 0; i < cardsCount; i++) {
-				Integer cardRankInt = new Integer(pCards[i].getRank().value());
+				Integer cardRankInt = new Integer(pCards[i].getRank().getValue());
 				Integer count = rankCounts.get(cardRankInt);
 
 				if(count == null) 

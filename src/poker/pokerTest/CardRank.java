@@ -16,7 +16,7 @@ public class CardRank implements Comparable<CardRank>  {
 	public final static int ACE 	= 14;
 
 
-	int mCardRank;
+	public int mCardRank;
 	public CardRank(int cardRank) {
 		mCardRank = cardRank;
 	}
@@ -44,7 +44,7 @@ public class CardRank implements Comparable<CardRank>  {
 	}
 
 
-	public int value() {
+	public int getValue() {
 		return mCardRank;
 	}
 
