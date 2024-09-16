@@ -16,6 +16,7 @@ public class EquityEvaluator {
         this.hand2 = hand2;
         this.board = board;
     }
+
     public void calculateEquity() {
         List<Card> deckWithoutHandAndBoard = new ArrayList<>(deck.cardList);
         deckWithoutHandAndBoard.removeAll(hand);
@@ -23,6 +24,7 @@ public class EquityEvaluator {
         int winsPlayer1 = 0;
         int winsPlayer2 = 0;
         int ties = 0;
+
 
         for (int i = 0; i < deckWithoutHandAndBoard.size(); i++) {
             for (int j = i + 1; j < deckWithoutHandAndBoard.size(); j++) {
@@ -59,6 +61,7 @@ public class EquityEvaluator {
                                     }
                                 }
                             }
+
                         }
                     }
                 }
@@ -74,6 +77,96 @@ public class EquityEvaluator {
         System.out.println("Equity gracza1  " + finalEquityPlayer1);
         System.out.println("Equity gracza2  " + finalEquityPlayer2);
     }
+
+    public void calculateEquityFlop() {
+        List<Card> deckWithoutHandAndBoard = new ArrayList<>(deck.cardList);
+        deckWithoutHandAndBoard.removeAll(hand);
+        deckWithoutHandAndBoard.removeAll(hand2);
+        double player1EquityFlop = 0;
+        double player2EquityFlop = 0;
+        int ties = 0;
+        for (int i = 0; i < deckWithoutHandAndBoard.size(); i++) {
+            for (int j = i + 1; j < deckWithoutHandAndBoard.size(); j++) {
+                for (int k = j + 1; k < deckWithoutHandAndBoard.size(); k++) {
+                    for (int m = k + 1; m < deckWithoutHandAndBoard.size(); m++) {
+                        for (int n = m + 1; n < deckWithoutHandAndBoard.size(); n++) {
+                            List<Card> possibleBoard= new ArrayList<>();
+                            possibleBoard.add(deckWithoutHandAndBoard.get(i));
+                            possibleBoard.add(deckWithoutHandAndBoard.get(j));
+                            possibleBoard.add(deckWithoutHandAndBoard.get(k));
+                            possibleBoard.add(deckWithoutHandAndBoard.get(m));
+                            possibleBoard.add(deckWithoutHandAndBoard.get(n));
+
+                            List<Card> possibleFlop = new ArrayList<>();
+                            List<Card> possibleTurnAndRiver = new ArrayList<>();
+                            possibleFlop.add(deckWithoutHandAndBoard.get(i));
+                            possibleFlop.add(deckWithoutHandAndBoard.get(j));
+                            possibleFlop.add(deckWithoutHandAndBoard.get(k));
+                            possibleTurnAndRiver.add(deckWithoutHandAndBoard.get(m));
+                            possibleTurnAndRiver.add(deckWithoutHandAndBoard.get(n));
+
+                            ResultHandOut flopResultPlayer1 = winningHand(hand, possibleFlop);
+                            ResultHandOut flopResultPlayer2 = winningHand(hand2, possibleFlop);
+
+                            ResultHandOut fullBoardResult1 = winningHand(hand, possibleBoard);
+                            ResultHandOut fullBoardResult2 = winningHand(hand2, possibleBoard);
+
+                            if (flopResultPlayer1.getValue() > flopResultPlayer2.getValue()){
+                                if (fullBoardResult1.getValue() > fullBoardResult2.getValue()){
+                                    player1EquityFlop++;
+                                }else if (fullBoardResult1.getValue() < fullBoardResult2.getValue()){
+                                    player2EquityFlop++;
+                                }
+                            }
+                            else if (flopResultPlayer1.getValue() < flopResultPlayer2.getValue()) {
+                                if (fullBoardResult1.getValue() < fullBoardResult2.getValue()){
+                                    player2EquityFlop++;
+                                }else if (fullBoardResult1.getValue() > fullBoardResult2.getValue()){
+                                    player1EquityFlop++;
+                                }
+                            }else {
+                                List<Integer> hand1FlopCards = flopResultPlayer1.getBestHandValues();
+                                List<Integer> hand2FlopCards = flopResultPlayer2.getBestHandValues();
+                                List<Integer> hand1FullBoard = flopResultPlayer1.getBestHandValues();
+                                List<Integer> hand2FullBoard = flopResultPlayer2.getBestHandValues();
+                                for (int y = 0; y < hand1FlopCards.size(); y++) {
+                                    if (hand1FlopCards.get(y) > hand2FlopCards.get(y) && hand1FullBoard.get(y) > hand2FullBoard.get(y)) {
+                                        player1EquityFlop++;
+                                        break;
+                                    } else if (hand1FlopCards.get(y) < hand2FlopCards.get(y) && hand1FullBoard.get(y) < hand2FullBoard.get(y)) {
+                                        player2EquityFlop++;
+                                        break;
+                                    } else if (y == 4) {
+                                        for (int z = y; z < hand1FullBoard.size(); z++){
+                                            if (hand1FullBoard.get(z) > hand2FlopCards.get(z)){
+                                                player1EquityFlop++;
+                                                break;
+                                            }else if (hand1FullBoard.get(z) < hand2FlopCards.get(z)){
+                                                player2EquityFlop++;
+                                                break;
+                                            }else if (z == 6){
+                                                ties++;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        double totalHands = player1EquityFlop + player2EquityFlop + ties;
+        double player1Equity = (double) player1EquityFlop / totalHands;
+        double player2Equity = (double) player2EquityFlop / totalHands;
+        double tiesEquity = (double) ties / totalHands;
+
+        player1Equity += tiesEquity / 2;
+        player2Equity += tiesEquity / 2;
+        System.out.println(player1Equity);
+        System.out.println(player2Equity);
+    }
+
     public void countTime() {
         long startTime = System.currentTimeMillis();
 
@@ -86,6 +179,7 @@ public class EquityEvaluator {
 
         System.out.printf("Zajeło to %.2f sekundy\n", durationInSeconds);
     }
+
     public List<Integer> checkStraightFlush(List<Card> handPlusBoard) {
         List<Integer> listFlushValue = checkFlush(handPlusBoard);
         List<Integer> straightFlushList = new ArrayList<>();
@@ -117,6 +211,7 @@ public class EquityEvaluator {
         }
         return List.of();
     }
+
     public List<Integer> checkQuads(List<Card> handPlusBoard) {
         HashMap<Integer, Integer> appreances = new HashMap<>();
         List<Integer> boardQuads = new ArrayList<>();
@@ -138,6 +233,7 @@ public class EquityEvaluator {
         boardQuads.add(maxKickerQuads);
         return boardQuads;
     }
+
     public List<Integer> checkFull(List<Card> handPlusBoard) {
         HashMap<Integer, Integer> appearances = new HashMap<>();
         int maxTripsValue = 0;
@@ -169,6 +265,7 @@ public class EquityEvaluator {
         }
         return List.of();
     }
+
     public List<Integer> checkFlush(List<Card> handPlusBoard) {
         HashMap<String, Integer> mapColor = new HashMap<>();
         ArrayList<Integer> listFlushValue = new ArrayList<>();
@@ -190,6 +287,7 @@ public class EquityEvaluator {
         listFlushValue.sort(Collections.reverseOrder());
         return listFlushValue;
     }
+
     public List<Integer> checkStraight(List<Card> handPlusBoard) {
         List<Integer> straightList = new ArrayList<>();
         List<Integer> resultStraightList = new ArrayList<>();
@@ -220,6 +318,7 @@ public class EquityEvaluator {
         resultStraightList.sort(Comparator.reverseOrder());
         return List.of();
     }
+
     public List<Integer> checkTrips(List<Card> handPlusBoard) {
         HashMap<Integer, Integer> appreances = new HashMap<>();
         List<Integer> boardTripsPlusKickers = new ArrayList<>();
@@ -251,6 +350,7 @@ public class EquityEvaluator {
         }
         return boardTripsPlusKickers;
     }
+
     public List<Integer> checkTwoPair(List<Card> handPlusBoard) {
         HashMap<Integer, Integer> appreances = new HashMap<>();
         int checkAmmountPair = 0;
@@ -328,6 +428,47 @@ public class EquityEvaluator {
         List<Card> hand1PlusBoard = new ArrayList<>();
         hand1PlusBoard.addAll(hand);
         hand1PlusBoard.addAll(board);
+        List<Integer> bestHandValues = checkStraightFlush(hand1PlusBoard);
+        if (bestHandValues.size() >= 5) {
+            return new ResultHandOut(9, bestHandValues);
+        }
+        bestHandValues = checkQuads(hand1PlusBoard);
+        if (bestHandValues.size() >= 5) {
+            return new ResultHandOut(8, bestHandValues);
+        }
+        bestHandValues = checkFull(hand1PlusBoard);
+        if (bestHandValues.size() >= 5) {
+            return new ResultHandOut(7, bestHandValues);
+        }
+        bestHandValues = checkFlush(hand1PlusBoard);
+        if (bestHandValues.size() >= 5) {
+            return new ResultHandOut(6, bestHandValues.subList(0, 5));
+        }
+        bestHandValues = checkStraight(hand1PlusBoard);
+        if (bestHandValues.size() >= 5) {
+            return new ResultHandOut(5, bestHandValues);
+        }
+        bestHandValues = checkTrips(hand1PlusBoard);
+        if (bestHandValues.size() >= 5) {
+            return new ResultHandOut(4, bestHandValues);
+        }
+        bestHandValues = checkTwoPair(hand1PlusBoard);
+        if (bestHandValues.size() >= 5) {
+            return new ResultHandOut(3, bestHandValues);
+        }
+        bestHandValues = checkPair(hand1PlusBoard);
+        if (bestHandValues.size() >= 5) {
+            return new ResultHandOut(2, bestHandValues);
+        }
+        bestHandValues = highCards(hand1PlusBoard);
+        return new ResultHandOut(1, bestHandValues);
+    }
+
+    public ResultHandOut winningFlop(List<Card> hand, List<Card> po, List<Card> turnAndRiver) {
+        List<Card> hand1PlusBoard = new ArrayList<>();
+        hand1PlusBoard.addAll(hand);
+        hand1PlusBoard.addAll(board);
+        hand1PlusBoard.addAll(turnAndRiver);
         List<Integer> bestHandValues = checkStraightFlush(hand1PlusBoard);
         if (bestHandValues.size() >= 5) {
             return new ResultHandOut(9, bestHandValues);
