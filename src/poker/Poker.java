@@ -11,11 +11,22 @@ public class Poker {
     public void init() {
         Deck myDeck = new Deck();
         List<Card> board = myDeck.getBoard("Ac", "2c", "3c", "4c", "8c");
-        List<Card> hand = myDeck.getHand("Ah", "6d");
-        List<Card> hand2 = myDeck.getHand("9s", "Th");
+        List<Card> hand = myDeck.getHand("Ah", "Ad");
+        List<Card> hand2 = myDeck.getHand("Ks", "Kc");
         EquityEvaluator myequityEvaluator = new EquityEvaluator(myDeck, hand, hand2,board);
+        Card cardFLop1 = new Card(10,"s");
+        Card cardFLop2 = new Card(9,"s");
+        Card cardFLop3 = new Card(2,"c");
+        Card cardTurn4 = new Card(2,"d");
+        List<Card> flop = new ArrayList<>();
+        flop.add(cardFLop1);
+        flop.add(cardFLop2);
+        flop.add(cardFLop3);
+        List<Card> flopAndTurn = new ArrayList<>(flop);
+        flopAndTurn.add(cardTurn4);
+        myequityEvaluator.calculateEquityFlop(flop);
+       // myequityEvaluator.calculateEquityTurn(flopAndTurn);
        // myequityEvaluator.calculateEquity();
-        myequityEvaluator.calculateEquityFlop();
        // myequityEvaluator.countTime();
     }
 }
