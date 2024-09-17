@@ -22,9 +22,10 @@ public class Poker {
         flop.add(cardFLop1);
         flop.add(cardFLop2);
         flop.add(cardFLop3);
+        myequityEvaluator.calculateEquityFlop(flop);
         List<Card> flopAndTurn = new ArrayList<>(flop);
         flopAndTurn.add(cardTurn4);
-        myequityEvaluator.calculateEquityFlop(flop);
+        myequityEvaluator.calculateEquityTurn(flopAndTurn);
        // myequityEvaluator.calculateEquityTurn(flopAndTurn);
        // myequityEvaluator.calculateEquity();
        // myequityEvaluator.countTime();

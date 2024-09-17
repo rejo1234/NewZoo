@@ -67,7 +67,7 @@ public class EquityEvaluator {
                 }
             }
         }
-        int total = winsPlayer1 + winsPlayer2 + ties;
+        int total = winsPlayer1 + winsPlayer2 + ties;   //todo uzyj tutaj funkcji ktora napisales do tego
         double equityPlayer1 = (double) winsPlayer1 / total;
         double equityPlayer2 = (double) winsPlayer2 / total;
         double equityFromTies = (double) ties / total;
@@ -86,7 +86,7 @@ public class EquityEvaluator {
         int ties = 0;
 
         for (int i = 0; i < deckWithoutHandAndBoard.size(); i++){
-                List<Card> possibleBoard= new ArrayList<>();
+                List<Card> possibleBoard= new ArrayList<>(); //todo uzyj new ArrayList<>(flopAndTurn) albo possibleBoard.addAll(flopAndTurn)
                 possibleBoard.add(flopAndTurn.get(0));
                 possibleBoard.add(flopAndTurn.get(1));
                 possibleBoard.add(flopAndTurn.get(2));
@@ -94,7 +94,7 @@ public class EquityEvaluator {
                 possibleBoard.add(deckWithoutHandAndBoard.get(i));
                 ResultHandOut resultPlayer1 = winningHand(hand, possibleBoard);
                 ResultHandOut resultPlayer2 = winningHand(hand2, possibleBoard);
-                if (resultPlayer1.getValue() > resultPlayer2.getValue()) {
+                if (resultPlayer1.getValue() > resultPlayer2.getValue()) { //todo tego grubasa ponizej fajnie bylo by wyniesc do funkcji bo mamy to w 3 miejscach jakis fajny sposob trzeba wymyslic na to
                     player1EquityTurn++;
                     break;
                 } else if (resultPlayer1.getValue() < resultPlayer2.getValue()) {
@@ -117,7 +117,7 @@ public class EquityEvaluator {
                     }
                 }
         }
-        System.out.println(calculateEquityFunckja(player1EquityTurn,player2EquityTurn,ties).get(0));
+        System.out.println(calculateEquityFunckja(player1EquityTurn,player2EquityTurn,ties).get(0)); //todo slabo ze 2 razy wolasz ta funkcje bo 2 razy musi sie to liczcyc wloz ja do zmiennej a pozniej rob na niej .get(0)/.get(1)
         System.out.println(calculateEquityFunckja(player1EquityTurn,player2EquityTurn,ties).get(1));
     }
 
@@ -131,7 +131,7 @@ public class EquityEvaluator {
 
         for (int i = 0; i < deckWithoutHandAndBoard.size(); i++){
             for (int j = i + 1; j < deckWithoutHandAndBoard.size(); j++){
-                List<Card> possibleBoard= new ArrayList<>();
+                List<Card> possibleBoard= new ArrayList<>();//todo uzyj new ArrayList<>(flop) albo possibleBoard.addAll(flopAndTurn)
                 possibleBoard.add(flop.get(0));
                 possibleBoard.add(flop.get(1));
                 possibleBoard.add(flop.get(2));
@@ -169,9 +169,9 @@ public class EquityEvaluator {
 
     }
 
-    public List<Double> calculateEquityFunckja(double player1EquityFlop, double player2EquityFlop,int ties){
+    public List<Double> calculateEquityFunckja(double player1EquityFlop, double player2EquityFlop,int ties){ //todo nie mieszac polskiego z angielskim proponuje nazwe getPlayersEquity
         double totalHands = player1EquityFlop + player2EquityFlop + ties;
-        double player1Equity = (double) player1EquityFlop / totalHands;
+        double player1Equity = (double) player1EquityFlop / totalHands; //todo (double) jest nie potrzebne bo zmienna player1EquityFlop jest juz doublem, a cos takiego castuje z jednego typu na drugi np z inta na doubla
         double player2Equity = (double) player2EquityFlop / totalHands;
         double tiesEquity = (double) ties / totalHands;
         player1Equity += tiesEquity / 2;
@@ -181,11 +181,11 @@ public class EquityEvaluator {
         playersEquity.add(player2Equity);
         return playersEquity;
     }
-    public List<Card> prepareDeckWithOutBoard(List<Card> flopCardsOrFlopAndTurn){
+    public List<Card> prepareDeckWithOutBoard(List<Card> flopCardsOrFlopAndTurn){ //todo flopCardsOrFlopAndTurn jest zbyt skompikowna wystarczy cards albo boardCards
         List<Card> deckWithoutHandAndBoard = new ArrayList<>(deck.cardList);
         deckWithoutHandAndBoard.removeAll(hand);
         deckWithoutHandAndBoard.removeAll(hand2);
-        for (int i = 0; i < flopCardsOrFlopAndTurn.size(); i++){
+        for (int i = 0; i < flopCardsOrFlopAndTurn.size(); i++){ //todo  tego nie mozna zrobic  deckWithoutHandAndBoard.removeAll(flopCardsOrFlopAndTurn); ?
             for (int j = 0; j < deckWithoutHandAndBoard.size(); j++){
                 if (flopCardsOrFlopAndTurn.get(i).getValue() == deckWithoutHandAndBoard.get(j).getValue() &&
                         flopCardsOrFlopAndTurn.get(i).getSuit().equals(deckWithoutHandAndBoard.get(j).getSuit())){
