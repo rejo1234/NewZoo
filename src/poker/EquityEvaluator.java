@@ -168,6 +168,9 @@ public class EquityEvaluator {
         System.out.println(calculateEquityFunckja(player1EquityFlop,player2EquityFlop,ties).get(1));
 
     }
+    public myNewClass getPlayersEquity(List<Card>,){
+
+    }
 
     public List<Double> calculateEquityFunckja(double player1EquityFlop, double player2EquityFlop,int ties){ //todo nie mieszac polskiego z angielskim proponuje nazwe getPlayersEquity
         double totalHands = player1EquityFlop + player2EquityFlop + ties;
