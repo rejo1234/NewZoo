@@ -25,9 +25,9 @@ public class Poker {
         //myequityEvaluator.calculateEquityFlop(flop);
         List<Card> flopAndTurn = new ArrayList<>(flop);
         flopAndTurn.add(cardTurn4);
-        myequityEvaluator.calculateEquityTurn(flopAndTurn);
-        // myequityEvaluator.calculateEquityTurn(flopAndTurn);
-        // myequityEvaluator.calculateEquity();
+        //myequityEvaluator.calculateEquityTurn(flopAndTurn);
+         //myequityEvaluator.calculateEquityTurn(flopAndTurn);
+         myequityEvaluator.calculateEquity();
         // myequityEvaluator.countTime();
     }
 }

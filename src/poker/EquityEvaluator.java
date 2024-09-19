@@ -21,11 +21,7 @@ public class EquityEvaluator {
         List<Card> deckWithoutHandAndBoard = new ArrayList<>(deck.cardList);
         deckWithoutHandAndBoard.removeAll(hand);
         deckWithoutHandAndBoard.removeAll(hand2);
-        int winsPlayer1 = 0;
-        int winsPlayer2 = 0;
-        int ties = 0;
-
-
+        GameResult gameResult = new GameResult();
         for (int i = 0; i < deckWithoutHandAndBoard.size(); i++) {
             for (int j = i + 1; j < deckWithoutHandAndBoard.size(); j++) {
                 for (int k = j + 1; k < deckWithoutHandAndBoard.size(); k++) {
@@ -38,80 +34,50 @@ public class EquityEvaluator {
                             possibleBoard.add(deckWithoutHandAndBoard.get(m));
                             possibleBoard.add(deckWithoutHandAndBoard.get(n));
 
-                            ResultHandOut resultPlayer1 = winningHand(hand, possibleBoard);
-                            ResultHandOut resultPlayer2 = winningHand(hand2, possibleBoard);
-
-                            GameResult result = getPlayersWins(resultPlayer1, resultPlayer2);
-                            winsPlayer1 = winsPlayer1 + result.getPlayer1Wins();
-                            winsPlayer2 = winsPlayer2 + result.getPlayer2Wins();
-                            ties = ties + result.getTies();
+                            addPlayerWins(possibleBoard,gameResult);
                         }
                     }
                 }
             }
         }
-        List<Double> resultPlayers = finalCalculateEquity(winsPlayer1, winsPlayer2, ties);
-        System.out.println(resultPlayers.get(0));
-        System.out.println(resultPlayers.get(1));
+         finalCalculateEquity(gameResult);
     }
 
     public void calculateEquityTurn(List<Card> flopAndTurn) {
         List<Card> deckWithoutHandAndBoard = prepareDeckWithOutBoard(flopAndTurn);
-        double player1EquityTurn = 0;
-        double player2EquityTurn = 0;
-        int ties = 0;
+        GameResult gameResult = new GameResult();
         for (int i = 0; i < deckWithoutHandAndBoard.size(); i++) {
             List<Card> possibleBoard = new ArrayList<>(flopAndTurn);
             possibleBoard.add(deckWithoutHandAndBoard.get(i));
-            ResultHandOut resultPlayer1 = winningHand(hand, possibleBoard);
-            ResultHandOut resultPlayer2 = winningHand(hand2, possibleBoard);
-            GameResult result = getPlayersWins(resultPlayer1, resultPlayer2);
-            player1EquityTurn = player1EquityTurn + result.getPlayer1Wins();
-            player2EquityTurn = player2EquityTurn + result.getPlayer2Wins();
-            ties = ties + result.getTies();
+            addPlayerWins(possibleBoard, gameResult);
         }
-        List<Double> resultPlayers = finalCalculateEquity(player1EquityTurn, player2EquityTurn, ties);
-        System.out.println(resultPlayers.get(0));
-        System.out.println(resultPlayers.get(1));
+        finalCalculateEquity(gameResult);
     }
 
+
     public void calculateEquityFlop(List<Card> flop) {
-        List<Card> deckWithoutHandAndBoard = new ArrayList<>();
-
-        double player1EquityFlop = 0;
-        double player2EquityFlop = 0;
-        int ties = 0;
-        deckWithoutHandAndBoard = prepareDeckWithOutBoard(flop);
-
+        GameResult gameResult = new GameResult();
+        List<Card> deckWithoutHandAndBoard = prepareDeckWithOutBoard(flop);
         for (int i = 0; i < deckWithoutHandAndBoard.size(); i++) {
             for (int j = i + 1; j < deckWithoutHandAndBoard.size(); j++) {
                 List<Card> possibleBoard = new ArrayList<>(flop);
                 possibleBoard.add(deckWithoutHandAndBoard.get(i));
                 possibleBoard.add(deckWithoutHandAndBoard.get(j));
-                ResultHandOut resultPlayer1 = winningHand(hand, possibleBoard);
-                ResultHandOut resultPlayer2 = winningHand(hand2, possibleBoard);
-                GameResult result = getPlayersWins(resultPlayer1, resultPlayer2);
-                player1EquityFlop = player1EquityFlop + result.getPlayer1Wins();
-                player2EquityFlop = player2EquityFlop + result.getPlayer2Wins();
-                ties = ties + result.getTies();
+               addPlayerWins(possibleBoard,gameResult);
             }
         }
-        List<Double> resultPlayers = finalCalculateEquity(player1EquityFlop, player2EquityFlop, ties);
-        System.out.println(resultPlayers.get(0));
-        System.out.println(resultPlayers.get(1));
+        finalCalculateEquity(gameResult);
     }
 
-    public GameResult getPlayersWins(ResultHandOut resultPlayer1, ResultHandOut resultPlayer2) {
-
-        int player1EquityFlop = 0;
-        int player2EquityFlop = 0;
-        int ties = 0;
+    public void addPlayerWins(List<Card> possibleBoard, GameResult gameResult) {
+        ResultHandOut resultPlayer1 = winningHand(hand, possibleBoard);
+        ResultHandOut resultPlayer2 = winningHand(hand2, possibleBoard);
 
         if (resultPlayer1.getValue() > resultPlayer2.getValue()) {
-            player1EquityFlop++;
+            gameResult.increasePlayer1Wins(1);
 
         } else if (resultPlayer1.getValue() < resultPlayer2.getValue()) {
-            player2EquityFlop++;
+            gameResult.increasePlayer2Wins(1);
 
         } else {
             List<Integer> hand1Cards = resultPlayer1.getBestHandValues();
@@ -119,29 +85,30 @@ public class EquityEvaluator {
 
             for (int y = 0; y < hand1Cards.size(); y++) {
                 if (hand1Cards.get(y) > hand2Cards.get(y)) {
-                    player1EquityFlop++;
+                    gameResult.increasePlayer1Wins(1);
                     break;
                 } else if (hand1Cards.get(y) < hand2Cards.get(y)) {
-                    player2EquityFlop++;
+                    gameResult.increasePlayer2Wins(1);
                     break;
                 } else if (y == 4) {
-                    ties++;
+                    gameResult.increaseTies(1);
                 }
             }
         }
-        return new GameResult(player1EquityFlop, player2EquityFlop, ties);
     }
 
-    public List<Double> finalCalculateEquity(double player1EquityFlop, double player2EquityFlop, int ties) {
-        double totalHands = player1EquityFlop + player2EquityFlop + ties;
-        double player1Equity = player1EquityFlop / totalHands;
-        double player2Equity = player2EquityFlop / totalHands;
-        double tiesEquity = (double) ties / totalHands;
+    public List<Double> finalCalculateEquity(GameResult gameResult) {
+        double totalHands = gameResult.getPlayer1Wins() + gameResult.getPlayer2Wins() + gameResult.getTies();
+        double player1Equity = gameResult.getPlayer1Wins() / totalHands;
+        double player2Equity = gameResult.getPlayer2Wins() / totalHands;
+        double tiesEquity = (double) gameResult.getTies() / totalHands;
         player1Equity += tiesEquity / 2;
         player2Equity += tiesEquity / 2;
         List<Double> playersEquity = new ArrayList<>();
         playersEquity.add(player1Equity);
         playersEquity.add(player2Equity);
+        System.out.printf("%.2f \n", player1Equity);
+        System.out.printf("%.2f \n", player2Equity);
         return playersEquity;
     }
 
@@ -149,7 +116,15 @@ public class EquityEvaluator {
         List<Card> deckWithoutHandAndBoard = new ArrayList<>(deck.cardList);
         deckWithoutHandAndBoard.removeAll(hand);
         deckWithoutHandAndBoard.removeAll(hand2);
-        deckWithoutHandAndBoard.removeAll(boardCards);
+        for (int i = 0; i < boardCards.size(); i++){
+            for (int j = 0; j < deckWithoutHandAndBoard.size(); j++){
+                if (boardCards.get(i).getValue() == deckWithoutHandAndBoard.get(j).getValue() &&
+                        boardCards.get(i).getSuit().equals(deckWithoutHandAndBoard.get(j).getSuit())){
+                    deckWithoutHandAndBoard.remove(j);
+                    j--;
+                }
+            }
+        }
         return deckWithoutHandAndBoard;
     }
 
