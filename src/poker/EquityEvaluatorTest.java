@@ -265,15 +265,15 @@ public class EquityEvaluatorTest {
         // List<Card> hand2 = myDeck.getHand("2s", "2h");Equity gracza2  0.8221711798839458 Labs 82,2
 
 
-//        List<Card> hand = myDeck.getHand("Ah", "Kd"); Equity gracza1  0.4699288210504677 Labs 45
-//        List<Card> hand2 = myDeck.getHand("6s", "6h");Equity gracza2  0.5300711789495324 Labs 55
+//        List<Card> hand = myDeck.getHand("Ah", "Kd"); Equity gracza1  0.45012392659247424 Labs 45
+//        List<Card> hand2 = myDeck.getHand("6s", "6h");Equity gracza2  0.5498760734075258 Labs 55
 
 
-//        List<Card> hand = myDeck.getHand("Jh", "Td"); Equity gracza1  0.7332731220624376 Labs 73,4
-//        List<Card> hand2 = myDeck.getHand("9s", "Th");Equity gracza2  0.2667268779375625 Labs 26,6
+//        List<Card> hand = myDeck.getHand("Jh", "Td"); Equity gracza1  0.7342157116960539 Labs 73,4
+//        List<Card> hand2 = myDeck.getHand("9s", "Th");Equity gracza2  0.265784288303946 Labs 26,6
 
-        //      List<Card> hand = myDeck.getHand("Ah", "Kd");Equity gracza1  0.6330680766966613 Labs 63,1
-        //     List<Card> hand2 = myDeck.getHand("9s", "Th");Equity gracza2  0.3669319233033387 Labs 36.9
+        //      List<Card> hand = myDeck.getHand("Ah", "Kd");Equity gracza1  0.6309235976789168 Labs 63,1
+        //     List<Card> hand2 = myDeck.getHand("9s", "Th");Equity gracza2  0.3690764023210832 Labs 36.9
     }
 
     public void countTime() {
