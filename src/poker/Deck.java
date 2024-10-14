@@ -7,8 +7,8 @@ import java.util.List;
 
 public class Deck {
     // stąd ma być zwracany board 5 kart oraz 2 handy
-    ArrayList<Card> cardList = new ArrayList<>();
-    HashMap<String,Integer> cardIndex = new HashMap<>();
+    public ArrayList<Card> cardList = new ArrayList<>();
+    public HashMap<String,Integer> cardIndex = new HashMap<>();
 
     public Deck(){
         int[] value = {2,3,4,5,6,7,8,9,10,11,12,13,14};
