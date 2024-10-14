@@ -2,6 +2,7 @@ import Animals.Zoo;
 import Refriegerator.Refriegerator;
 import leetCode.*;
 import poker.Poker;
+import poker.game.StartGamePlay;
 import poker.pokerTest.Console;
 import pokerResult.ResultPoker;
 
@@ -11,7 +12,8 @@ import java.io.IOException;
 // then press Enter. You can now see whitespace characters in your code.
 public class Main {
     public static void main(String[] args) throws IOException {
-        startPoker();
+      //  startPoker();
+        startGame();
        // startConsole();
 //        startRevision();
         //starFileTutorial();
@@ -47,6 +49,10 @@ public class Main {
     public static void startConsole(){
         Console myConsole = new Console();
 
+    }
+    public static void startGame(){
+        StartGamePlay myStartGamePlay = new StartGamePlay();
+        myStartGamePlay.initGame();
     }
 
     public static void startPoker(){

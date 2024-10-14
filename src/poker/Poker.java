@@ -1,6 +1,7 @@
 package poker;
 
-import poker.pokerTest.HandRanking;
+import poker.game.GamePlay;
+import poker.game.MakeBoardAndCards;
 
 import java.util.*;
 
@@ -30,6 +31,7 @@ public class Poker {
         //myequityEvaluator.calculateEquity();
         // myequityEvaluator.countTime();
         //myequityEvaluator.instantlyResult();
-        myequityEvaluator.getEquity(hand,hand2);
+        //myequityEvaluator.getEquity(hand,hand2);
+
     }
 }
