@@ -1,7 +1,7 @@
 package poker;
 
 import poker.game.GamePlay;
-import poker.game.MakeBoardAndCards;
+import poker.game.PokerUtils;
 
 import java.util.*;
 

@@ -16,10 +16,10 @@ import java.util.Random;
 //zapytanie czy chcesz doładować stacka jeśli masz mniej niż 100bb
 //ładne printy jaki jest board/ kto wygrał z jakim układem/print equity na all in w trakcie gry/
 //czyszenie po preflopie,flopie,turnie,river
-public class MakeBoardAndCards {
+public class PokerUtils  {
     Deck deck;
-    public MakeBoardAndCards(Deck deck){
-        this.deck = deck;
+    PokerUtils(Deck deck){
+        this.deck = new Deck();
     }
 
     public HandsAndBoard makeHandsBoard(){

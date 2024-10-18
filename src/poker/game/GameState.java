@@ -3,9 +3,12 @@ package poker.game;
 public class GameState {
     public GamePhase gamePhase;
     double pot;
+    public double smallBlind = 0.5;
+    public double bigBlind = 1;
     public GameState(GamePhase gamePhase,double pot){
         this.gamePhase = gamePhase;
         this.pot = pot;
+
     }
     public GamePhase getGamePhase(){
         return gamePhase;

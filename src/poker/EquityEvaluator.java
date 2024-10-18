@@ -11,6 +11,7 @@ public class EquityEvaluator {
 
     public HashMap<String, String> equityMap;
 
+
     public EquityEvaluator(Deck deck, List<Card> hand1, List<Card> hand2, List<Card> board) {
         this.deck = deck;
         this.hand = hand1;
@@ -110,19 +111,19 @@ public class EquityEvaluator {
         return finalCalculateEquity(gameResult);
     }
 
-    public String addPlayerWinsTest(List<Card> possibleBoard, List<Card> hand1, List<Card> hand2) {
+    public GameResult.result updatePlayerWins(List<Card> possibleBoard, List<Card> hand1, List<Card> hand2) {
         ResultHandOut resultPlayer1 = winningHand(hand1, possibleBoard);
         ResultHandOut resultPlayer2 = winningHand(hand2, possibleBoard);
 
         if (resultPlayer1.getValue() > resultPlayer2.getValue()) {
             System.out.print("Player1 wygrał z " + resultPlayer1.getBestHandValues());
             System.out.println(" Player2 przegrał z " + resultPlayer2.getBestHandValues());
-            return "Player1";
+            return GameResult.result.WIN_PLAYER1;
 
         } else if (resultPlayer1.getValue() < resultPlayer2.getValue()) {
             System.out.print("Player2 wygrał z " + resultPlayer1.getBestHandValues());
             System.out.println(" Player1 przegrał z " + resultPlayer2.getBestHandValues());
-            return "Player2";
+            return GameResult.result.WIN_PLAYER2;
 
         } else {
             List<Integer> hand1Cards = resultPlayer1.getBestHandValues();
@@ -132,20 +133,17 @@ public class EquityEvaluator {
                 if (hand1Cards.get(y) > hand2Cards.get(y)) {
                     System.out.print("Player1 wygrał z " + resultPlayer1.getBestHandValues());
                     System.out.println(" Player2 przegrał z " + resultPlayer2.getBestHandValues());
-                    return "Player1";
+                    return GameResult.result.WIN_PLAYER1;
 
                 } else if (hand1Cards.get(y) < hand2Cards.get(y)) {
                     System.out.print("Player2 wygrał z " + resultPlayer2.getBestHandValues());
                     System.out.println(" Player1 przegrał z " + resultPlayer1.getBestHandValues());
-                    return "Player2";
+                    return GameResult.result.WIN_PLAYER2;
 
-                } else if (y == 4) {
-                    System.out.println("Remis");
-                    return "Remis";
                 }
             }
         }
-        return "eeeee";
+        return GameResult.result.DRAW;
     }
 
     public void calculateEquity(List<Card> player1, List<Card> player2,GameResult gameResult) {
@@ -166,9 +164,6 @@ public class EquityEvaluator {
                             possibleBoard.add(deckWithoutHandAndBoard.get(n));
                             addPlayerWins(possibleBoard, gameResult);
                             index++;
-                            if (index == 962597){
-                                System.out.println();
-                            }
                         }
                     }
                 }
