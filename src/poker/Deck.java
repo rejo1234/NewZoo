@@ -1,14 +1,12 @@
 package poker;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import poker.game.HandsAndBoard;
+
+import java.util.*;
 
 public class Deck {
-    // stąd ma być zwracany board 5 kart oraz 2 handy
-    ArrayList<Card> cardList = new ArrayList<>();
-    HashMap<String,Integer> cardIndex = new HashMap<>();
+    public ArrayList<Card> cardList = new ArrayList<>();
+    public HashMap<String,Integer> cardIndex = new HashMap<>();
 
     public Deck(){
         int[] value = {2,3,4,5,6,7,8,9,10,11,12,13,14};
@@ -39,6 +37,30 @@ public class Deck {
                 }
             }
     }
+    public HandsAndBoard shuffleDeckAndGetHandsAndBoard(){
+        List<Card> possibleRandomBoardAndHands = new ArrayList<>(Deck.this.cardList);
+        Random random = new Random();
+        List<Card> hand1 = new ArrayList<>();
+        List<Card> hand2 = new ArrayList<>();
+        List<Card> board = new ArrayList<>();
+        for (int i = 0; i < 9; i++){
+            int index = random.nextInt(possibleRandomBoardAndHands.size());
+            if (i < 2){
+                hand1.add(possibleRandomBoardAndHands.get(index));
+                possibleRandomBoardAndHands.remove(index);
+            }
+            else if (i < 4){
+                hand2.add(possibleRandomBoardAndHands.get(index));
+                possibleRandomBoardAndHands.remove(index);
+            }
+            else {
+                board.add(possibleRandomBoardAndHands.get(index));
+                possibleRandomBoardAndHands.remove(index);
+            }
+        }
+        return new HandsAndBoard(hand1,hand2,board);
+    }
+
     public List<Card> getBoard(String index1, String index2, String index3, String index4, String index5){
         ArrayList<Card> board = new ArrayList<>();
         int cardIndexBoard1 = cardIndex.get(index1);
@@ -60,13 +82,5 @@ public class Deck {
         hand1.add(cardList.get(cardIndexHand1));
         hand1.add(cardList.get(cardIndexHand2));
         return hand1;
-    }
-
-    public void printDeck(){
-        for (int i = 0; i < cardList.size(); i++){
-            Card myCard = cardList.get(i);
-            myCard.printCard();
-        }
-        System.out.println(" ");
     }
 }
