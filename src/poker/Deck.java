@@ -5,7 +5,6 @@ import poker.game.HandsAndBoard;
 import java.util.*;
 
 public class Deck {
-    // stąd ma być zwracany board 5 kart oraz 2 handy
     public ArrayList<Card> cardList = new ArrayList<>();
     public HashMap<String,Integer> cardIndex = new HashMap<>();
 
@@ -83,13 +82,5 @@ public class Deck {
         hand1.add(cardList.get(cardIndexHand1));
         hand1.add(cardList.get(cardIndexHand2));
         return hand1;
-    }
-
-    public void printDeck(){
-        for (int i = 0; i < cardList.size(); i++){
-            Card myCard = cardList.get(i);
-            myCard.printCard();
-        }
-        System.out.println(" ");
     }
 }

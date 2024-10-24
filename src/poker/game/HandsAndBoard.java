@@ -18,12 +18,6 @@ public class HandsAndBoard {
     public List<Card> getHand1(){
         return hand1;
     }
-    public List<Card> getFlop(){
-        return new ArrayList<>(board.subList(0, 3));
-    }
-    public List<Card> getTurn(){
-        return new ArrayList<>(board.subList(0, 4));
-    }
     public List<Card> getHand2(){
         return hand2;
     }

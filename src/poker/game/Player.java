@@ -15,6 +15,9 @@ public class Player {
         this.amountInHand = amountInHand;
         this.name = name;
     }
+    public void setHandPlayer(List<Card> newHand){
+        this.handPlayer = newHand;
+    }
     public String getNamePlayer(){
         return name;
     }

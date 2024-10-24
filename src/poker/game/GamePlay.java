@@ -5,16 +5,13 @@ import poker.*;
 import java.util.*;
 
 public class GamePlay {
-    public static final Map<GamePhase, Integer> BOARD_PRINT_INDEXES = new HashMap<>();
-
-    static {
-        BOARD_PRINT_INDEXES.put(GamePhase.PREFLOP, 3);
-        BOARD_PRINT_INDEXES.put(GamePhase.FLOP, 4);
-        BOARD_PRINT_INDEXES.put(GamePhase.TURN, 5);
-    }
+    public static final Map<GamePhase, Integer> BOARD_PRINT_INDEXES = Map.of(
+            GamePhase.PREFLOP, 3,
+            GamePhase.FLOP, 4,
+            GamePhase.TURN, 5
+    );
 
     public Deck deck;
-    public PokerUtils boardAndCards;
     public HandsAndBoard result;
     public Player player1;
     public Player player2;
@@ -35,11 +32,12 @@ public class GamePlay {
 
     public GamePlay() {
         this.deck = new Deck();
-        this.boardAndCards = new PokerUtils(deck);
         this.result = deck.shuffleDeckAndGetHandsAndBoard();
         this.player1 = new Player(100, 0, result.getHand1(), "player1");
         this.player2 = new Player(100, 0, result.getHand2(), "player2");
         this.gameState = new GameState(GamePhase.PREFLOP, 0);
+        player1.setHandPlayer(result.getHand1()); // Daj nowe karty Player1
+        player2.setHandPlayer(result.getHand2());
         playerList = new ArrayList<>();
         playerList.add(player1);
         playerList.add(player2);
@@ -51,16 +49,11 @@ public class GamePlay {
         Player bigBlindPlayer = player1;
         Player smallBlindPlayer = player2;
         while (playerList.size() > 1) {
-            System.out.println(bigBlindPlayer.getNamePlayer());
-            System.out.println(bigBlindPlayer.getStackPlayer());
-            System.out.println(smallBlindPlayer.getNamePlayer());
-            System.out.println(smallBlindPlayer.getStackPlayer());
-            upadePotStackAmountInHandPlayer(gameState.bigBlind, bigBlindPlayer);
-            upadePotStackAmountInHandPlayer(gameState.smallBlind, smallBlindPlayer);
             preflopActionSmall(bigBlindPlayer, smallBlindPlayer);
+            preFlopAction(bigBlindPlayer, smallBlindPlayer);
             resetMaxValueRaises();
             gameState.setGamePhase(GamePhase.FLOP);
-            for (int i = 0; i < 3; i++){
+            for (int i = 0; i < 3; i++) {
                 postFlopActionBig(bigBlindPlayer, smallBlindPlayer);
             }
 
@@ -69,20 +62,137 @@ public class GamePlay {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            for (int n = 0; n < 20; n++) {
+            for (int n = 0; n < 10; n++) {
                 System.out.println();
             }
             Player temp = bigBlindPlayer;
             bigBlindPlayer = smallBlindPlayer;
             smallBlindPlayer = temp;
+            this.result = deck.shuffleDeckAndGetHandsAndBoard();
+            player1.setHandPlayer(result.getHand1());
+            player2.setHandPlayer(result.getHand2());
         }
     }
-    public void updatePlayersOnShowdownResult2(GameResult.result playWhoWon, Player player1, Player player2, Boolean isDraw){
+
+    public void preFlopAction(Player bigBlindPlayer, Player smallBlindPlayer) {
+        preFlopDetails(bigBlindPlayer, smallBlindPlayer);
+        Scanner scanner = new Scanner(System.in);
+        System.out.println(smallBlindPlayer.getNamePlayer() + "decyduje 1 call 2 raise 3 fold");
+        int decision = scanner.nextInt();
+        if (decision == 1) {
+            System.out.println(bigBlindPlayer.getNamePlayer() + "decyduje 1 check 2 rasie");
+            decision = scanner.nextInt();
+            if (decision == 1) {
+                layCards(gameState);
+            } else {
+                untilNotRaise(smallBlindPlayer, bigBlindPlayer);
+                System.out.println(bigBlindPlayer.getNamePlayer() + "decyduje 1 check 2 bet");
+                decision = scanner.nextInt();
+                if (decision == 1) {
+                    System.out.println(smallBlindPlayer.getNamePlayer() + "decyduje 1 check 2 bet");
+
+                }
+            }
+        }
+    }
+
+    public void gameStart2() {
+        Player nonActivePlayer = player1;
+        Player activePlayer = player2;
+        preFlopDetails(nonActivePlayer, activePlayer);
+        PossibleAction lastAction = null;
+        while (nextTurnPlayer(lastAction)) {
+            lastAction = manageAction(lastAction, activePlayer);
+            Player temp = activePlayer;
+            activePlayer = nonActivePlayer;
+            nonActivePlayer = temp;
+        }
+    }
+
+    public boolean nextTurnPlayer(PossibleAction lastAction) {
+        if (lastAction == null) {
+            return true;
+        } else if (lastAction == PossibleAction.Bet || lastAction == PossibleAction.Raise || lastAction == PossibleAction.Limp) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public PossibleAction manageAction(PossibleAction lastAction, Player activePlayer) {
+        System.out.println(activePlayer.getNamePlayer() + " decyduje");
+        Scanner scanner = new Scanner(System.in);
+        if (lastAction == null) {
+            System.out.println("1 limp 2 raise");
+            int decision = scanner.nextInt();
+            if (decision == 1) {
+                return PossibleAction.Limp;
+            } else
+                System.out.println("Podaj do ilu raise");
+            int raiseAmount = scanner.nextInt();
+            updatePotAndStackAmount(raiseAmount, activePlayer);
+            return PossibleAction.Raise;
+        }
+        else if (lastAction== PossibleAction.Limp){
+            System.out.println("1 check, 2 raise");
+            int decision = scanner.nextInt();
+            if (decision == 1) {
+                return PossibleAction.Check;
+            } else if (decision == 2) {
+                System.out.println("Podaj do ilu raise");
+                int raiseAmount = scanner.nextInt();
+                updatePotAndStackAmount(raiseAmount, activePlayer);
+                return PossibleAction.Raise;
+            }
+        }
+       else if (lastAction == PossibleAction.Bet || lastAction == PossibleAction.Raise) {
+            System.out.println("1 Call, 2 Raise, 3 Fold");
+            int decision = scanner.nextInt();
+            if (decision == 1) {
+                return PossibleAction.Call;
+            } else if (decision == 2) {
+                System.out.println("Podaj do ilu raise");
+                int raiseAmount = scanner.nextInt();
+                updatePotAndStackAmount(raiseAmount, activePlayer);
+                return PossibleAction.Raise;
+            } else {
+                return PossibleAction.Fold;
+            }
+        } else if (lastAction == PossibleAction.Check) {
+            System.out.println("1 Check, 2 Bet");
+            int decision = scanner.nextInt();
+            if (decision == 1) {
+                return PossibleAction.Check;
+            } else {
+                return PossibleAction.Bet;
+            }
+        }
+
+        return null;
+    }
+
+    public int untilNotRaise(Player activePlayer, Player nonActivePlayer) {
+        //bet raise call
+        System.out.println(activePlayer.getNamePlayer() + "do ilu raise");
+        Scanner scanner = new Scanner(System.in);
+        int raiseAmount = scanner.nextInt();
+        updatePotAndStackAmount(raiseAmount, activePlayer);
+        System.out.println(nonActivePlayer.getNamePlayer() + "decyduje 1 call 2 raise 3 fold");
+        int decision = scanner.nextInt();
+        if (decision == 1) {
+            layCards(gameState);
+        } else if (decision == 2) {
+            untilNotRaise(nonActivePlayer, activePlayer);
+        }
+        return 4;
+    }
+
+    public void updatePlayersOnShowdownResult(Player player1, Player player2, Boolean isDraw) {
         player1.increaseStackPlyer(gameState.pot);
         player1.decreaseAmountInHand(gameState.pot / 2);
         player2.decreaseAmountInHand(gameState.pot / 2);
         gameState.decreasePot(gameState.pot);
-        if(isDraw){
+        if (isDraw) {
             player2.increaseStackPlyer(gameState.pot / 2);
         }
         this.result = deck.shuffleDeckAndGetHandsAndBoard();
@@ -91,60 +201,35 @@ public class GamePlay {
         this.isFirstRaiseSmallBlind = true;
         this.smallBlindCallPreFlop = true;
     }
-//    public void updatePlayersOnShowdownResult(GameResult.result player) {
-//        if (player.equals(GameResult.result.WIN_PLAYER1)) {
-//            player1.increaseStackPlyer(gameState.pot);
-//            player1.decreaseAmountInHand(gameState.pot / 2);
-//            player2.decreaseAmountInHand(gameState.pot / 2);
-//            gameState.decreasePot(gameState.pot);
-//        } else if (player.equals(GameResult.result.WIN_PLAYER2)) {
-//            player2.increaseStackPlyer(gameState.pot);
-//            player2.decreaseAmountInHand(gameState.pot / 2);
-//            player1.decreaseAmountInHand(gameState.pot / 2);
-//            gameState.decreasePot(gameState.pot);
-//        } else {
-//            player1.increaseStackPlyer(gameState.pot / 2);
-//            player2.increaseStackPlyer(gameState.pot / 2);
-//            player1.decreaseAmountInHand(gameState.pot / 2);
-//            player2.decreaseAmountInHand(gameState.pot / 2);
-//            gameState.decreasePot(gameState.pot);
-//        }
-//        this.result = deck.shuffleDeckAndGetHandsAndBoard();
-//        this.gameState.setGamePhase(GamePhase.PREFLOP);
-//        this.isFirstRaiseBigBlind = true;
-//        this.isFirstRaiseSmallBlind = true;
-//        this.smallBlindCallPreFlop = true;
-//    }
 
     public void postFlopActionBig(Player player1, Player player2) {
-        printPot();
-        System.out.println(player1.getNamePlayer() + " decyduje");
-        System.out.println("1 = check 2 = bet");
-        Scanner scanner = new Scanner(System.in);
-        int decision2 = scanner.nextInt();
-        if (decision2 == 1) {
-            System.out.println(player1.getNamePlayer() + " checks");
-            postFlopActionSmallGotNoBet(player1, player2);
-        } else {
-            double bet = makeBetBigBlingPlayer(player1, player2);
-            PostFlopActionSmallGotBetOrRaise(player1, player2, bet);
+        if (player1.getStackPlayer() > 0 && player2.getStackPlayer() > 0) {
+            printPot();
+            System.out.println(player1.getNamePlayer() + " decyduje");
+            System.out.println("1 = check 2 = bet");
+            Scanner scanner = new Scanner(System.in);
+            int decision2 = scanner.nextInt();
+            if (decision2 == 1) {
+                System.out.println(player1.getNamePlayer() + " checks");
+                postFlopActionSmallGotNoBet(player1, player2);
+            } else {
+                double bet = makeBetBigBlingPlayer(player1, player2);
+                if (player1.getStackPlayer() > 0 && player2.getStackPlayer() > 0) {
+                    PostFlopActionSmallGotBetOrRaise(player1, player2, bet);
+                }
+            }
         }
     }
 
     public void PostFlopActionSmallGotBetOrRaise(Player player1, Player player2, double bet) {
-        printPot();
-        System.out.println(player2.getNamePlayer() + " decyduje");
-        System.out.println(player2.getNamePlayer() + " " + amountToCall(player1, player2) + "$ to call");
-        System.out.println("1 = call 2 = raise 3 = fold");
+        showPlayerBettingOptions(player1, player2);
         Scanner scanner = new Scanner(System.in);
         int decision2 = scanner.nextInt();
         if (decision2 == 1) {
-            System.out.println(player2.getNamePlayer() + " calls " + amountToCall(player1,player2));
-            upadePotStackAmountInHandPlayer(amountToCall(player1, player2), player2);
-            makeBoardDependsGamePhase();
+            manageCallAction(player2, player1);
         } else if (decision2 == 2) {
             makeRaiseSmallBlind(player1, player2, bet);
-            postFlopActionBigGotBetOrRaise(player1, player2,amountToCall(player1,player2));
+            postFlopActionBigGotBetOrRaise(player1, player2, amountToCall(player1, player2));
         } else {
             System.out.println(player2.getNamePlayer() + " folds");
             System.out.println(player1.getNamePlayer() + " wins " + gameState.getPot() + "$");
@@ -163,24 +248,21 @@ public class GamePlay {
             makeBoardDependsGamePhase();
         } else {
             double bet = makeBetSmallBlindPlayer(player1, player2);
-            postFlopActionBigGotBetOrRaise(player1, player2, bet);
+            if (player1.getStackPlayer() > 0 && player2.getStackPlayer() > 0) {
+                postFlopActionBigGotBetOrRaise(player1, player2, bet);
+            }
         }
         resetMaxValueRaises();
     }
 
     public void postFlopActionBigGotBetOrRaise(Player player1, Player player2, Double bet) {
-        printPot();
-        System.out.println(player1.getNamePlayer() + " decyduje");
-        System.out.println(player1.getNamePlayer() + " " + amountToCall(player2, player1) + "$ to call");
-        System.out.println("1 = call 2 = raise 3 = fold");
+        showPlayerBettingOptions(player2, player1);
         Scanner scanner = new Scanner(System.in);
         int decision2 = scanner.nextInt();
         if (decision2 == 1) {
-            System.out.println(player1.getNamePlayer() + " calls " + amountToCall(player2,player1));
-            upadePotStackAmountInHandPlayer(amountToCall(player2, player1), player1);
-            makeBoardDependsGamePhase();
+            manageCallAction(player1, player2);
         } else if (decision2 == 2) {
-            makeRaiseBigBlind(player1, player2,bet);
+            makeRaiseBigBlind(player1, player2, bet);
             postFlopActionSmallGotBetOrRaise(player1, player2);
         } else {
             System.out.println(player1.getNamePlayer() + " folds");
@@ -189,19 +271,14 @@ public class GamePlay {
     }
 
     public void postFlopActionSmallGotBetOrRaise(Player player1, Player player2) {
-        printPot();
-        System.out.println(player2.getNamePlayer() + " " + amountToCall(player1, player2) + "$ to call");
-        System.out.println(player2.getNamePlayer() + " decyduje");
-        System.out.println("1 = call 2 = raise 3 = fold");
+        showPlayerBettingOptions(player1, player2);
         Scanner scanner = new Scanner(System.in);
         int decision2 = scanner.nextInt();
         if (decision2 == 1) {
-            System.out.println(player2.getNamePlayer() + " calls " + amountToCall(player1,player2));
-            upadePotStackAmountInHandPlayer(amountToCall(player1, player2), player2);
-            makeBoardDependsGamePhase();
+            manageCallAction(player2, player1);
         } else if (decision2 == 2) {
             makeRaiseSmallBlind(player1, player2, amountToCall(player1, player2));
-            postFlopActionBigGotBetOrRaise(player1, player2,amountToCall(player1,player2));
+            postFlopActionBigGotBetOrRaise(player1, player2, amountToCall(player1, player2));
         } else {
             System.out.println(player2.getNamePlayer() + " folds");
             System.out.println(player1.getNamePlayer() + " wins " + gameState.getPot() + "$");
@@ -209,18 +286,19 @@ public class GamePlay {
     }
 
     public void preflopActionSmall(Player player1, Player player2) {
-        System.out.println("Zaczyna " + player2.getNamePlayer());
-        preFlopDetails(player1,player2);
+        preFlopDetails(player1, player2);
         Scanner scanner = new Scanner(System.in);
         int decision = scanner.nextInt();
         if (decision == 1) {
             System.out.println(player2.getNamePlayer() + " calls " + amountToCall(player1, player2) + "$");
-            upadePotStackAmountInHandPlayer(amountToCall(player1, player2), player2);
+            updatePotAndStackAmount(amountToCall(player1, player2), player2);
             preFlopActionBigBlindSmallBlindLimp(player1, player2);
         } else {
             smallBlindCallPreFlop = false;
             makeRaiseSmallBlind(player1, player2, amountToCall(player1, player2));
-            preFlopActionBigBlindSmallBlindRaise(player1, player2);
+            if (player1.getStackPlayer() > 0 && player2.getStackPlayer() > 0) {
+                preFlopActionBigBlindSmallBlindRaise(player1, player2);
+            }
         }
     }
 
@@ -234,24 +312,22 @@ public class GamePlay {
             System.out.println(player1.getNamePlayer() + " checks");
             printBoard(gameState.getGamePhase());
         } else {
-            makeRaiseBigBlind(player1, player2,amountToCall(player1,player2));
-            preFlopActionSmallGotRaiseOrBet(player1, player2);
+            makeRaiseBigBlind(player1, player2, amountToCall(player1, player2));
+            if (player1.getStackPlayer() > 0 && player2.getStackPlayer() > 0) {
+                preFlopActionSmallGotRaiseOrBet(player1, player2);
+            }
+
         }
     }
 
     public void preFlopActionBigBlindSmallBlindRaise(Player player1, Player player2) {
-        System.out.println(player1.getNamePlayer() + " decyduje");
-        System.out.println(player1.getNamePlayer() + " " + amountToCall(player2, player1) + "$ to call");
-        System.out.println("1 = call 2 = raise 3 = fold");
+        showPlayerBettingOptions(player2, player1);
         Scanner scanner = new Scanner(System.in);
         int decision2 = scanner.nextInt();
         if (decision2 == 1) {
-            System.out.println(player1.getNamePlayer() + " calls " + amountToCall(player2, player1) + "$");
-            upadePotStackAmountInHandPlayer(amountToCall(player2, player1), player1);
-            printPot();
-            printBoard(gameState.getGamePhase());
+            manageCallAction(player1, player2);
         } else if (decision2 == 2) {
-            makeRaiseBigBlind(player1, player2,amountToCall(player1,player2));
+            makeRaiseBigBlind(player1, player2, amountToCall(player1, player2));
             preFlopActionSmallGotRaiseOrBet(player1, player2);
         } else {
             System.out.println(player1.getNamePlayer() + " folds");
@@ -260,46 +336,27 @@ public class GamePlay {
     }
 
     public void preFlopActionBigGotRaise(Player player1, Player player2) {
-        System.out.println(player1.getNamePlayer() + " decyduje");
-        System.out.println(player1.getNamePlayer() + " " + amountToCall(player2, player1) + "$ to call");
-        System.out.println("1 = call 2 = raise 3 = fold");
+        showPlayerBettingOptions(player2, player1);
+        printPot();
         Scanner scanner = new Scanner(System.in);
         int decision2 = scanner.nextInt();
         if (decision2 == 1) {
-            System.out.println(player1.getNamePlayer() + " calls " + amountToCall(player2, player1) + "$");
-            upadePotStackAmountInHandPlayer(amountToCall(player2, player1), player1);
-            printPot();
-            printBoard(gameState.getGamePhase());
+            manageCallAction(player1, player2);
         } else if (decision2 == 2) {
-            makeRaiseBigBlind(player1, player2,amountToCall(player1,player2));
+            makeRaiseBigBlind(player1, player2, amountToCall(player1, player2));
             preFlopActionSmallGotRaiseOrBet(player1, player2);
         } else {
             System.out.println(player1.getNamePlayer() + " folds");
             System.out.println(player2.getNamePlayer() + " wins " + gameState.getPot() + "$");
         }
     }
+
     public void preFlopActionSmallGotRaiseOrBet(Player player1, Player player2) {
-        System.out.println(player2.getNamePlayer() + " decyduje");
-        printPot();
-        System.out.println(player2.getNamePlayer() + " " + amountToCall(player1, player2) + "$ to call");
-        System.out.println("1 = call 2 = raise 3 = fold");
+        showPlayerBettingOptions(player1, player2);
         Scanner scanner = new Scanner(System.in);
         int decision2 = scanner.nextInt();
         if (decision2 == 1) {
-            if (amountToCall(player1, player2) >= player2.getStackPlayer()) {
-                gameState.updatePot(amountToCall(player1, player2));
-                System.out.println(player2.getNamePlayer() + " All in " + (amountToCall(player1, player2) + player2.getAmountInHand()) + "&");
-                System.out.println("pot wynosi " + gameState.getPot() + "$");
-                equityEvaluator.calculateEquity(result.getHand1(), result.getHand2(), gameResult);
-            } else {
-                gameState.updatePot(amountToCall(player1, player2));
-                System.out.println(player2.getNamePlayer() + " calls " + amountToCall(player1, player2) + "$");
-                player2.updateStackPlayer(amountToCall(player1, player2));
-                player2.updateAmountInHand(amountToCall(player1, player2));
-                printPot();
-                System.out.println("Flop");
-                printBoard(gameState.getGamePhase());
-            }
+            manageCallAction(player2, player1);
         } else if (decision2 == 2) {
             makeRaiseSmallBlind(player1, player2, amountToCall(player1, player2));
             preFlopActionBigGotRaise(player1, player2);
@@ -308,16 +365,56 @@ public class GamePlay {
             System.out.println(player1.getNamePlayer() + " wins " + gameState.getPot() + "$");
         }
     }
-    public double amountToCall(Player player1, Player player2){
+
+    public void showPlayerBettingOptions(Player player1, Player player2) {
+        printPot();
+        System.out.println(player2.getNamePlayer() + " decyduje");
+        System.out.println(player2.getNamePlayer() + " " + amountToCall(player1, player2) + "$ to call");
+        System.out.println("1 = call 2 = raise 3 = fold");
+    }
+
+    public void manageCallAction(Player player1, Player player2) {
+        if (amountToCall(player2, player1) >= player1.getStackPlayer() && gameState.getGamePhase() == GamePhase.PREFLOP) {
+            System.out.println(player1.getNamePlayer() + " All in " + (amountToCall(player2, player1) + player1.getAmountInHand()) + "$");
+            updatePotAndStackAmount(amountToCall(player2, player1), player1);
+            System.out.println("River");
+            printBoard(GamePhase.TURN);
+            gameState.setGamePhase(GamePhase.RIVER);
+            layCards(gameState);
+        } else if (amountToCall(player2, player1) >= player1.getStackPlayer()) {
+            System.out.println(player1.getNamePlayer() + " All in " + amountToCall(player2, player1) + "$");
+            updatePotAndStackAmount(amountToCall(player2, player1), player1);
+            System.out.println("River");
+            printBoard(GamePhase.TURN);
+            gameState.setGamePhase(GamePhase.RIVER);
+            layCards(gameState);
+        } else {
+            System.out.println(player1.getNamePlayer() + " calls " + amountToCall(player2, player1) + "$");
+            updatePotAndStackAmount(amountToCall(player2, player1), player1);
+            makeBoardDependsGamePhase();
+        }
+    }
+
+    public double amountToCall(Player player1, Player player2) {
         return player1.getAmountInHand() - player2.getAmountInHand();
     }
-    public void preFlopDetails(Player playerBigBlind, Player playerSmallBlind){
+
+    public void preFlopDetails(Player playerBigBlind, Player playerSmallBlind) {
+        System.out.println(playerBigBlind.getNamePlayer());
+        System.out.println(playerBigBlind.getHandPlayer());
+        System.out.println(playerBigBlind.getStackPlayer());
+        System.out.println(playerSmallBlind.getNamePlayer());
+        System.out.println(playerSmallBlind.getHandPlayer());
+        System.out.println(playerSmallBlind.getStackPlayer());
+        updatePotAndStackAmount(gameState.bigBlind, playerBigBlind);
+        updatePotAndStackAmount(gameState.smallBlind, playerSmallBlind);
+        System.out.println("Zaczyna " + playerSmallBlind.getNamePlayer());
         System.out.println(playerBigBlind.getNamePlayer() + " bigBlind " + gameState.bigBlind + "$");
         System.out.println(playerSmallBlind.getNamePlayer() + " smallBlind " + gameState.smallBlind + "$");
         printPot();
         System.out.println(playerSmallBlind.getNamePlayer() + " podejmuje decyzje");
         System.out.println(playerSmallBlind.getNamePlayer() + " " + amountToCall(playerBigBlind, playerSmallBlind) + "$ to call");
-        System.out.println("1 = call 2 = raise");
+        // System.out.println("1 = call 2 = raise");
     }
 
     public void printPot() {
@@ -341,11 +438,14 @@ public class GamePlay {
         } else {
             GameResult.result whoWins = equityEvaluator.updatePlayerWins(result.getBoard(), result.getHand1(), result.getHand2());
             System.out.print(whoWins + " " + gameState.getPot() + "$");
-            if (whoWins == GameResult.result.DRAW){
+            if (whoWins == GameResult.result.DRAW) {
                 isDraw = true;
             }
-            updatePlayersOnShowdownResult2(whoWins,player2,player1,isDraw);
-            System.out.println();
+            if (whoWins == GameResult.result.WIN_PLAYER1) {
+                updatePlayersOnShowdownResult(player1, player2, isDraw);
+            } else {
+                updatePlayersOnShowdownResult(player2, player1, isDraw);
+            }
         }
     }
 
@@ -361,10 +461,9 @@ public class GamePlay {
 
         if (maxValueRaiseSmallBlind == 0 && bet != 0) {
             System.out.println("Podaj do ilu raise minimum " + (bet * 2));
-        }else if (smallBlindCallPreFlop){
+        } else if (smallBlindCallPreFlop) {
             System.out.println("Podaj do ilu raise");
-        }
-        else {
+        } else {
             System.out.println("Podaj do ilu, Raise minimum " + (maxValueRaiseSmallBlind * 2));
         }
         double raise = 0;
@@ -375,13 +474,13 @@ public class GamePlay {
             if (raise >= player1.stack + player1.getAmountInHand()) {
                 System.out.println(player1.getNamePlayer() + " All in " + (player1.getStackPlayer() + gameState.bigBlind) + "$");
                 raise = player1.stack;
-                upadePotStackAmountInHandPlayer(raise, player1);
+                updatePotAndStackAmount(raise, player1);
                 isFirstRaiseBigBlind = false;
                 isFirstRaiseSmallBlind = false;
                 preFlopActionSmallGotRaiseOrBet(player1, player2);
             } else {
                 System.out.println(player1.getNamePlayer() + " raise to " + raise + "$");
-                upadePotStackAmountInHandPlayer(raise - gameState.bigBlind, player1);
+                updatePotAndStackAmount(raise - gameState.bigBlind, player1);
                 isFirstRaiseBigBlind = false;
                 isFirstRaiseSmallBlind = false;
                 maxValueRaiseBigBlind = raise;
@@ -390,7 +489,7 @@ public class GamePlay {
             if (raise >= player1.stack + player1.getAmountInHand()) {
                 System.out.println(player1.getNamePlayer() + " All in " + player1.getStackPlayer() + "$");
                 raise = player1.stack;
-                upadePotStackAmountInHandPlayer(raise, player1);
+                updatePotAndStackAmount(raise, player1);
                 preFlopActionSmallGotRaiseOrBet(player1, player2);
             } else {
                 if (raise > maxValueRaiseBigBlind && (!isFirstRaiseBigBlind) || bigBlindBetPostFlop) {
@@ -402,7 +501,7 @@ public class GamePlay {
                 isFirstRaiseBigBlind = false;
                 maxValueRaiseBigBlind = raise;
                 System.out.println(player1.getNamePlayer() + " raise to " + raise + "$");
-                upadePotStackAmountInHandPlayer(raise, player1);
+                updatePotAndStackAmount(raise, player1);
             }
         }
     }
@@ -411,13 +510,11 @@ public class GamePlay {
         double raise = 0;
         Scanner scanner = new Scanner(System.in);
 
-        if (isFirstRaiseSmallBlind && gameState.gamePhase == GamePhase.PREFLOP){
+        if (isFirstRaiseSmallBlind && gameState.gamePhase == GamePhase.PREFLOP) {
             System.out.println("Podaj do ilu raise minimum 2$");
-        }
-        else if (maxValueRaiseBigBlind == 0){
+        } else if (maxValueRaiseBigBlind == 0) {
             System.out.println("Podaj do ilu raise minimum " + (bet * 2));
-        }
-        else {
+        } else {
             System.out.println("Podaj do ilu raise minimum " + (maxValueRaiseBigBlind * 2));
         }
         raise = scanner.nextDouble();
@@ -425,7 +522,7 @@ public class GamePlay {
             if (raise >= player2.stack) {
                 System.out.println(player2.getNamePlayer() + " All in " + (player2.getStackPlayer() + player2.getAmountInHand()) + "$");
                 raise = player2.stack + player2.getAmountInHand();
-                upadePotStackAmountInHandPlayer(raise - gameState.bigBlind, player2);
+                updatePotAndStackAmount(raise - gameState.smallBlind, player2);
                 isFirstRaiseSmallBlind = false;
                 preFlopActionBigGotRaise(player1, player2);
             } else {
@@ -440,11 +537,11 @@ public class GamePlay {
             if (raise >= player2.stack + player2.getAmountInHand()) {
                 System.out.println(player2 + " All in " + player2.getStackPlayer() + "$");
                 raise = player2.stack;
-                upadePotStackAmountInHandPlayer(raise, player2);
+                updatePotAndStackAmount(raise, player2);
                 preFlopActionBigGotRaise(player1, player2);
             } else if (smallBlindCallPreFlop && gameState.getGamePhase() == GamePhase.PREFLOP) {
                 System.out.println(player2.getNamePlayer() + " raise to " + raise + "$");
-                upadePotStackAmountInHandPlayer(raise - gameState.bigBlind, player2);
+                updatePotAndStackAmount(raise - gameState.bigBlind, player2);
                 smallBlindCallPreFlop = false;
                 player2.increaseStackPlyer(maxValueRaiseSmallBlind);
                 player2.decreaseAmountInHand(maxValueRaiseSmallBlind);
@@ -456,15 +553,15 @@ public class GamePlay {
                     player2.increaseStackPlyer(maxValueRaiseSmallBlind);
                     player2.decreaseAmountInHand(maxValueRaiseSmallBlind);
 
-                }else if (smallBlindBetPostFlop){
-                    gameState.decreasePot(amountToCall(player1,player2));
-                    player2.increaseStackPlyer(amountToCall(player1,player2));
-                    player2.decreaseAmountInHand(amountToCall(player1,player2));
+                } else if (smallBlindBetPostFlop) {
+                    gameState.decreasePot(amountToCall(player1, player2));
+                    player2.increaseStackPlyer(amountToCall(player1, player2));
+                    player2.decreaseAmountInHand(amountToCall(player1, player2));
                 }
                 isFirstRaiseSmallBlind = false;
                 maxValueRaiseSmallBlind = raise;
                 System.out.println(player2.getNamePlayer() + " raise to " + raise + "$");
-                upadePotStackAmountInHandPlayer(raise, player2);
+                updatePotAndStackAmount(raise, player2);
             }
         }
     }
@@ -478,11 +575,11 @@ public class GamePlay {
         if (bet >= player1.stack) {
             System.out.println(player1.getNamePlayer() + " All in " + player1.getStackPlayer() + "$");
             bet = player1.stack;
-            upadePotStackAmountInHandPlayer(bet, player1);
-            preFlopActionSmallGotRaiseOrBet(player1, player2);
+            updatePotAndStackAmount(bet, player1);
+            postFlopActionSmallGotBetOrRaise(player1, player2);
         } else {
             System.out.println(player1.getNamePlayer() + " bets " + bet + "$");
-            upadePotStackAmountInHandPlayer(bet, player1);
+            updatePotAndStackAmount(bet, player1);
         }
         return bet;
     }
@@ -508,13 +605,13 @@ public class GamePlay {
         bigBlindBetPostFlop = false;
     }
 
-    public void upadePotStackAmountInHandPlayer(double amount, Player player) {
+    public void updatePotAndStackAmount(double amount, Player player) {
         gameState.updatePot(amount);
         player.updateStackPlayer(amount);
         player.updateAmountInHand(amount);
     }
 
-    public double makeBetSmallBlindPlayer(Player player1, Player player2){
+    public double makeBetSmallBlindPlayer(Player player1, Player player2) {
         double bet = 0;
         smallBlindBetPostFlop = true;
         Scanner scanner = new Scanner(System.in);
@@ -523,11 +620,11 @@ public class GamePlay {
         if (bet >= player2.stack) {
             System.out.println(player2.getNamePlayer() + " All in " + player2.getStackPlayer() + "$");
             bet = player2.stack;
-            upadePotStackAmountInHandPlayer(bet, player2);
-            preFlopActionSmallGotRaiseOrBet(player1, player2);
+            updatePotAndStackAmount(bet, player2);
+            postFlopActionBigGotBetOrRaise(player1, player2, amountToCall(player1, player2));
         } else {
             System.out.println(player2.getNamePlayer() + " bets " + bet + "$");
-            upadePotStackAmountInHandPlayer(bet, player2);
+            updatePotAndStackAmount(bet, player2);
         }
         return bet;
     }
