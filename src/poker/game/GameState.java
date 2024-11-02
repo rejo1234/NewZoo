@@ -23,7 +23,7 @@ public class GameState {
         this.pot = pot - amount;
         return pot;
     }
-    public double updatePot(double amount){
+    public double increasePot(double amount){
         this.pot = pot + amount;
         return this.pot;
     }
