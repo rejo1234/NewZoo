@@ -28,7 +28,7 @@ public class GameResult {
     public void increaseTies(int wynik){
         this.ties += wynik;
     }
-    public enum result {
+    public enum winningHand {
         WIN_PLAYER1,
         WIN_PLAYER2,
         DRAW

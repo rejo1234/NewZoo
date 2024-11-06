@@ -8,15 +8,15 @@ public class Player {
     double stack;
     double amountInHand;
     double previousRaise;
-    double moneyAtStrit;
+    double moneyOnStreet;
     List<Card> handPlayer;
     String name;
-    public Player(double stack1,double amountInHand, double previousRaise, double moneyAtStrit , List<Card> handPlayer,String name){
-        this.stack = stack1;
+    public Player(double stack,double amountInHand, double previousRaise, double moneyOnStreet , List<Card> handPlayer,String name){
+        this.stack = stack;
         this.handPlayer = handPlayer;
         this.amountInHand = amountInHand;
         this.previousRaise = previousRaise;
-        this.moneyAtStrit = moneyAtStrit;
+        this.moneyOnStreet = moneyOnStreet;
         this.name = name;
     }
     public void setHandPlayer(List<Card> newHand){
@@ -32,13 +32,13 @@ public class Player {
         return stack;
     }
     public double getPlayerMoneyAtStrit(){
-        return moneyAtStrit;
+        return moneyOnStreet;
     }
-    public void increasePlayerMoneyAtStrit(double amount){
-        this.moneyAtStrit = moneyAtStrit + amount;
+    public void increasePlayermoneyOnStreet(double amount){
+        this.moneyOnStreet = moneyOnStreet + amount;
     }
-    public void setPlayerMoneyAtStrit(double amount){
-        this.moneyAtStrit = amount;
+    public void setPlayerMoneyOnStreet(double amount){
+        this.moneyOnStreet = amount;
     }
 
     public double getAmountInHand() {
@@ -54,6 +54,9 @@ public class Player {
     public double increaseStackPlyer(double amount){
         this.stack = stack + amount;
         return stack;
+    }
+    public double setAmountInHand(double amount){
+       return this.amountInHand = amount;
     }
     public double decreaseAmountInHand(double amount){
         this.amountInHand = amountInHand - amount;

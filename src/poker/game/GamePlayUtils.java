@@ -1,0 +1,38 @@
+package poker.game;
+
+import static poker.game.GamePlay.BOARD_PRINT_INDEXES;
+
+
+public class GamePlayUtils  {
+    GameState gameState;
+
+    public static void printPot(GameState gameState) {
+        System.out.println("Pot wynosi " + gameState.getPot() + "$");
+    }
+    public static void printBoard(GamePhase gamePhase, HandsAndBoard result,GameState gameState) {
+        System.out.println(gameState.gamePhase);
+        int endIndex = BOARD_PRINT_INDEXES.get(gamePhase);
+        for (int i = 0; i < endIndex; i++) {
+            System.out.print(result.getBoard().get(i) + " ");
+        }
+        System.out.println();
+    }
+    public static double amountToCall(Player player1, Player player2) {
+        return player1.getAmountInHand() - player2.getAmountInHand();
+    }
+    public static void printPreFlopDetails(Player playerBigBlind, Player playerSmallBlind, HandsAndBoard result, GameState gameState) {
+        System.out.println(result.getBoard());
+        System.out.println(playerBigBlind.getNamePlayer());
+        System.out.println(playerBigBlind.getHandPlayer());
+        System.out.println(playerBigBlind.getStackPlayer());
+        System.out.println(playerSmallBlind.getNamePlayer());
+        System.out.println(playerSmallBlind.getHandPlayer());
+        System.out.println(playerSmallBlind.getStackPlayer());
+        System.out.println("Zaczyna " + playerSmallBlind.getNamePlayer());
+        System.out.println(playerBigBlind.getNamePlayer() + " bigBlind " + gameState.bigBlind + "$");
+        System.out.println(playerSmallBlind.getNamePlayer() + " smallBlind " + gameState.smallBlind + "$");
+        GamePlayUtils.printPot(gameState);
+        System.out.println(playerSmallBlind.getNamePlayer() + " podejmuje decyzje");
+        System.out.println(playerSmallBlind.getNamePlayer() + " " + GamePlayUtils.amountToCall(playerBigBlind, playerSmallBlind) + "$ to call");
+    }
+}

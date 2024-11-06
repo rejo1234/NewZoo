@@ -19,6 +19,9 @@ public class GameState {
     public double getPot(){
         return pot;
     }
+    public double setPot(double amount){
+        return this.pot = amount;
+    }
     public double decreasePot(double amount){
         this.pot = pot - amount;
         return pot;

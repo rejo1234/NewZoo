@@ -1,5 +1,5 @@
 package poker.game;
 
 public enum PossibleAction {
-    Bet,Call,Raise,Fold,Limp,Check
+    BET,CALL,RAISE,FOLD,LIMP,CHECK
 }
