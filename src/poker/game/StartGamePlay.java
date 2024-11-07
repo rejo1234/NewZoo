@@ -8,7 +8,8 @@ import java.util.List;
 public class StartGamePlay {
     public void initGame(){
         GamePlay myGamePlay = new GamePlay();
-        myGamePlay.gameStart();
-
+        GamePlayTests myGamePlayTests = new GamePlayTests();
+        myGamePlayTests.inPutScenariosActions();
+       // myGamePlay.gameStart();
     }
 }
