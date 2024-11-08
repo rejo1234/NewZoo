@@ -1,16 +1,22 @@
 package poker.game;
 
-import static poker.game.GamePlay.BOARD_PRINT_INDEXES;
+import java.util.Map;
+import java.util.Scanner;
 
 
 public class GamePlayUtils  {
-    GameState gameState;
+    public static final Scanner scanner = new Scanner(System.in);
+    public static final Map<GamePhase, Integer> BOARD_PRINT_INDEXES = Map.of(
+            GamePhase.FLOP, 3,
+            GamePhase.TURN, 4,
+            GamePhase.RIVER, 5
+    );
 
     public static void printPot(GameState gameState) {
         System.out.println("Pot wynosi " + gameState.getPot() + "$");
     }
-    public static void printBoard(GamePhase gamePhase, HandsAndBoard result,GameState gameState) {
-        System.out.println(gameState.gamePhase);
+    public static void printBoard(GamePhase gamePhase, HandsAndBoard result) {
+        System.out.println(gamePhase);
         int endIndex = BOARD_PRINT_INDEXES.get(gamePhase);
         for (int i = 0; i < endIndex; i++) {
             System.out.print(result.getBoard().get(i) + " ");
@@ -34,5 +40,11 @@ public class GamePlayUtils  {
         GamePlayUtils.printPot(gameState);
         System.out.println(playerSmallBlind.getNamePlayer() + " podejmuje decyzje");
         System.out.println(playerSmallBlind.getNamePlayer() + " " + GamePlayUtils.amountToCall(playerBigBlind, playerSmallBlind) + "$ to call");
+    }
+    public static void printInfoBeforeStreet(Player activePlayer, Player nonActivePlayer){
+        System.out.println(activePlayer.getStackPlayer() + " " + activePlayer.getNamePlayer());
+        System.out.println(nonActivePlayer.getStackPlayer() + " " + nonActivePlayer.getNamePlayer());
+        System.out.println(activePlayer.getNamePlayer() + " decyduje");
+        System.out.println("Podaj decyzje");
     }
 }

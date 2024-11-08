@@ -4,7 +4,6 @@ import poker.Deck;
 import poker.EquityEvaluator;
 import poker.GameResult;
 
-import java.util.Scanner;
 
 public class ActionHandler {
     GameState gameState;
@@ -42,7 +41,19 @@ public class ActionHandler {
         return result;
     }
 
-
+    public void handleHandStart(Player activePlayer, Player nonActivePlayer){
+        if (activePlayer.getStackPlayer() < 100) {
+            activePlayer.increaseStackPlyer(100 - activePlayer.getStackPlayer());
+        }
+        if (nonActivePlayer.getStackPlayer() < 100) {
+            nonActivePlayer.increaseStackPlyer(100 - nonActivePlayer.getStackPlayer());
+        }
+        updatePotAndStackAmount(gameState.bigBlind, nonActivePlayer);
+        updatePotAndStackAmount(gameState.smallBlind, activePlayer);
+        activePlayer.increasePlayermoneyOnStreet(gameState.smallBlind);
+        nonActivePlayer.increasePlayermoneyOnStreet(gameState.bigBlind);
+        GamePlayUtils.printPreFlopDetails(nonActivePlayer, activePlayer, result, gameState);
+    }
     public void handleNextHand() {
         for (int i = 0; i < 10; i++) {
             System.out.println();
@@ -65,22 +76,25 @@ public class ActionHandler {
     }
 
 
-    public void handleNextStreet(GameState gameState) {
+    public void handleNextStreet(GameState gameState, Player activePlayer, Player nonActivePlayer) {
         if (gameState.getGamePhase() == GamePhase.PREFLOP) {
-            GamePlayUtils.printPot(gameState);
-            gameState.setGamePhase(GamePhase.FLOP);
-            GamePlayUtils.printBoard(GamePhase.PREFLOP,result,gameState);
+            GamePlay.resetMaxValueRaises(activePlayer,nonActivePlayer);
+            updateGameStateAndPrint(GamePhase.FLOP);
         } else if (gameState.getGamePhase() == GamePhase.FLOP) {
-            GamePlayUtils.printPot(gameState);
-            gameState.setGamePhase(GamePhase.TURN);
-            GamePlayUtils.printBoard(GamePhase.FLOP,result, gameState);
+            GamePlay.resetMaxValueRaises(activePlayer,nonActivePlayer);
+            updateGameStateAndPrint(GamePhase.TURN);
         } else if (gameState.getGamePhase() == GamePhase.TURN) {
-            GamePlayUtils.printPot(gameState);
-            gameState.setGamePhase(GamePhase.RIVER);
-            GamePlayUtils.printBoard(GamePhase.TURN,result, gameState);
+            GamePlay.resetMaxValueRaises(activePlayer,nonActivePlayer);
+            updateGameStateAndPrint(GamePhase.RIVER);
         } else {
+            GamePlay.resetMaxValueRaises(activePlayer,nonActivePlayer);
             resultAtShowdown();
         }
+    }
+    public void updateGameStateAndPrint(GamePhase gamePhase){
+        GamePlayUtils.printPot(gameState);
+        gameState.setGamePhase(gamePhase);
+        GamePlayUtils.printBoard(gamePhase,result);
     }
 
     public void hanldeLimp(Player activePlayer) {
@@ -92,9 +106,7 @@ public class ActionHandler {
 
     public void handleRaisePlayer(Player activePlayer, Player nonActivePlayer) {
         System.out.println("Podaj do ilu, raise minimum " + Math.max(2, 2 * nonActivePlayer.getPreviousRaiseOrBet()));
-        double raise = 0;
-        Scanner scanner = new Scanner(System.in);
-        raise = scanner.nextDouble();
+        double raise = GamePlayUtils.scanner.nextInt();
         if (raise >= activePlayer.stack) {
             raise = handleAllIn(activePlayer);
         } else {
@@ -121,10 +133,8 @@ public class ActionHandler {
         gameState.decreasePot(gameState.pot);
     }
     public void handleBetPlayer(Player activePlayer) {
-        double bet = 0;
-        Scanner scanner = new Scanner(System.in);
         System.out.println("Podaj size beta");
-        bet = scanner.nextDouble();
+        double bet = GamePlayUtils.scanner.nextDouble();
         if (bet >= activePlayer.stack) {
             bet = handleAllIn(activePlayer);
             updatePotAndStackAmount(bet, player1);
