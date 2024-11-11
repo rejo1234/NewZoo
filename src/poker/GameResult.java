@@ -4,6 +4,7 @@ public class GameResult {
     int player1Wins;
     int player2Wins;
     int ties;
+
     public GameResult(){
         this.player1Wins = 0;
         this.player2Wins = 0;
@@ -26,5 +27,10 @@ public class GameResult {
     }
     public void increaseTies(int wynik){
         this.ties += wynik;
+    }
+    public enum PlayerWinner {
+        WIN_PLAYER1,
+        WIN_PLAYER2,
+        DRAW
     }
 }
