@@ -5,11 +5,6 @@ import poker.*;
 import java.util.*;
 
 public class GamePlay {
-    public static final Map<GamePhase, Integer> BOARD_PRINT_INDEXES = Map.of(
-            GamePhase.PREFLOP, 3,
-            GamePhase.FLOP, 4,
-            GamePhase.TURN, 5
-    );
 
     public Deck deck;
     public HandsAndBoard result;
@@ -20,6 +15,7 @@ public class GamePlay {
     public EquityEvaluator equityEvaluator;
     public GameResult gameResult;
     public ActionHandler actionHandler;
+
 
     public GamePlay() {
         this.deck = new Deck();
@@ -41,13 +37,12 @@ public class GamePlay {
         Player smallBlindPlayer = player2;
         Player bigBlindPlayer = player1;
         boolean outOfPostionPlayer = false;
+        PossibleAction lastAction = null;
+        HandleActionResult handleActionResult = new HandleActionResult();
         while (playerList.size() > 1) {
             Player nonActivePlayer = bigBlindPlayer;
             Player activePlayer = smallBlindPlayer;
-            PossibleAction lastAction = null;
-            topUpPlayer(nonActivePlayer, activePlayer);
-            preFlopDetails(nonActivePlayer, activePlayer);
-            HandleActionResult handleActionResult = new HandleActionResult();
+            actionHandler.handleHandStart(activePlayer,nonActivePlayer);
             for (int i = 0; i < 4; i++) {
                 while (nextTurnPlayer(lastAction, outOfPostionPlayer)) {
                     outOfPostionPlayer = activePlayer != smallBlindPlayer && gameState.gamePhase != GamePhase.PREFLOP;
@@ -60,12 +55,10 @@ public class GamePlay {
                 lastAction = null;
                 activePlayer = bigBlindPlayer;
                 nonActivePlayer = smallBlindPlayer;
-                actionHandler.handleNextStreet(gameState);
+                actionHandler.handleNextStreet(gameState, activePlayer, nonActivePlayer);
                 if (handleActionResult.isFold || handleActionResult.isAllIn) {
                     break;
                 }
-
-                resetMaxValueRaises(activePlayer, nonActivePlayer);
             }
             Player temp = smallBlindPlayer;
             smallBlindPlayer = bigBlindPlayer;
@@ -86,40 +79,18 @@ public class GamePlay {
     }
 
     public PossibleAction getAction(PossibleAction lastAction, Player activePlayer, Player nonActivePlayer) {
-        System.out.println(activePlayer.getStackPlayer() + " " + activePlayer.getNamePlayer());
-        System.out.println(nonActivePlayer.getStackPlayer() + " " + nonActivePlayer.getNamePlayer());
-        System.out.println(activePlayer.getNamePlayer() + " decyduje");
-        System.out.println("Podaj decyzje");
-        Scanner scanner = new Scanner(System.in);
+        GamePlayUtils.printInfoBeforeStreet(activePlayer,nonActivePlayer);
         int decision;
         if (lastAction == null && gameState.getGamePhase() == GamePhase.PREFLOP) {
-            System.out.println("1 limp 2 raise");
-            decision = scanner.nextInt();
-            if (decision == 1) {
-                return PossibleAction.LIMP;
-            } else {
-                return PossibleAction.RAISE;
-            }
+         return getActionFor("1 limp 2 raise", PossibleAction.LIMP, PossibleAction.RAISE);
         } else if (lastAction == null && gameState.getGamePhase() != GamePhase.PREFLOP) {
-            System.out.println("1 check 2 bet");
-            decision = scanner.nextInt();
-            if (decision == 1) {
-                return PossibleAction.CHECK;
-            } else {
-                return PossibleAction.BET;
-            }
+            return getActionFor("1 check 2 bet " , PossibleAction.CHECK, PossibleAction.BET);
         } else if (lastAction == PossibleAction.CHECK) {
-            System.out.println("1 check 2 bet");
-            decision = scanner.nextInt();
-            if (decision == 1) {
-                return PossibleAction.CHECK;
-            } else {
-                return PossibleAction.BET;
-            }
+           return getActionFor("1 check 2 bet " , PossibleAction.CHECK, PossibleAction.BET);
         } else if (lastAction == PossibleAction.BET || lastAction == PossibleAction.RAISE) {
             System.out.println(GamePlayUtils.amountToCall(nonActivePlayer, activePlayer) + "$ to call");
             System.out.println("1 Call, 2 Raise, 3 Fold");
-            decision = scanner.nextInt();
+            decision = GamePlayUtils.scanner.nextInt();
             if (decision == 1) {
                 System.out.println(activePlayer.getNamePlayer() + " calls $" + GamePlayUtils.amountToCall(nonActivePlayer, activePlayer));
                 return PossibleAction.CALL;
@@ -129,34 +100,21 @@ public class GamePlay {
                 return PossibleAction.FOLD;
             }
         } else {
-            System.out.println("1 check, 2 raise");
-            decision = scanner.nextInt();
-            if (decision == 1) {
-                return PossibleAction.CHECK;
-            } else {
-                return PossibleAction.RAISE;
-            }
+          return getActionFor("1 check 2 raise", PossibleAction.CHECK, PossibleAction.RAISE);
         }
     }
-    public void preFlopDetails(Player playerBigBlind, Player playerSmallBlind) {
-        actionHandler.updatePotAndStackAmount(gameState.bigBlind, playerBigBlind);
-        actionHandler.updatePotAndStackAmount(gameState.smallBlind, playerSmallBlind);
-        playerSmallBlind.increasePlayermoneyOnStreet(gameState.smallBlind);
-        playerBigBlind.increasePlayermoneyOnStreet(gameState.bigBlind);
-        GamePlayUtils.printPreFlopDetails(playerBigBlind, playerSmallBlind, result, gameState);
+    public PossibleAction getActionFor(String stringDecisions, PossibleAction possibleAction,PossibleAction possibleAction2){
+        System.out.println(stringDecisions);
+       int decision = GamePlayUtils.scanner.nextInt();
+       if (decision == 1){
+           return possibleAction;
+       }
+        return possibleAction2;
     }
 
 
-    public void topUpPlayer(Player activePlayer, Player nonActivePlayer) {
-        if (activePlayer.getStackPlayer() < 100) {
-            activePlayer.increaseStackPlyer(100 - activePlayer.getStackPlayer());
-        }
-        if (nonActivePlayer.getStackPlayer() < 100) {
-            nonActivePlayer.increaseStackPlyer(100 - nonActivePlayer.getStackPlayer());
-        }
-    }
 
-    public void resetMaxValueRaises(Player activePlayer, Player nonActivePlayer) {
+    public static void resetMaxValueRaises(Player activePlayer, Player nonActivePlayer) {
         activePlayer.setPreviousRaiseOrBet(0);
         nonActivePlayer.setPreviousRaiseOrBet(0);
         activePlayer.setPlayerMoneyOnStreet(0);
