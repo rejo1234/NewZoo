@@ -82,11 +82,11 @@ public class GamePlay {
         GamePlayUtils.printInfoBeforeStreet(activePlayer,nonActivePlayer);
         int decision;
         if (lastAction == null && gameState.getGamePhase() == GamePhase.PREFLOP) {
-         return getActionFor(" limp ", " raise", PossibleAction.LIMP, PossibleAction.RAISE);
+         return getActionFor("1 limp 2 raise", PossibleAction.LIMP, PossibleAction.RAISE);
         } else if (lastAction == null && gameState.getGamePhase() != GamePhase.PREFLOP) {
-            return getActionFor(" check ", " bet", PossibleAction.CHECK, PossibleAction.BET);
+            return getActionFor("1 check 2 bet " , PossibleAction.CHECK, PossibleAction.BET);
         } else if (lastAction == PossibleAction.CHECK) {
-           return getActionFor(" check ", " bet ", PossibleAction.CHECK, PossibleAction.BET);
+           return getActionFor("1 check 2 bet " , PossibleAction.CHECK, PossibleAction.BET);
         } else if (lastAction == PossibleAction.BET || lastAction == PossibleAction.RAISE) {
             System.out.println(GamePlayUtils.amountToCall(nonActivePlayer, activePlayer) + "$ to call");
             System.out.println("1 Call, 2 Raise, 3 Fold");
@@ -100,11 +100,11 @@ public class GamePlay {
                 return PossibleAction.FOLD;
             }
         } else {
-          return getActionFor(" check ", " raise ", PossibleAction.CHECK, PossibleAction.RAISE);
+          return getActionFor("1 check 2 raise", PossibleAction.CHECK, PossibleAction.RAISE);
         }
     }
-    public PossibleAction getActionFor(String stringDecision, String stringDecision2, PossibleAction possibleAction,PossibleAction possibleAction2){
-        System.out.println("1" + stringDecision + "2" + stringDecision2);
+    public PossibleAction getActionFor(String stringDecisions, PossibleAction possibleAction,PossibleAction possibleAction2){
+        System.out.println(stringDecisions);
        int decision = GamePlayUtils.scanner.nextInt();
        if (decision == 1){
            return possibleAction;

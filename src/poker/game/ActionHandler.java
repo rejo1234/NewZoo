@@ -77,17 +77,14 @@ public class ActionHandler {
 
 
     public void handleNextStreet(GameState gameState, Player activePlayer, Player nonActivePlayer) {
+        GamePlay.resetMaxValueRaises(activePlayer,nonActivePlayer);
         if (gameState.getGamePhase() == GamePhase.PREFLOP) {
-            GamePlay.resetMaxValueRaises(activePlayer,nonActivePlayer);
             updateGameStateAndPrint(GamePhase.FLOP);
         } else if (gameState.getGamePhase() == GamePhase.FLOP) {
-            GamePlay.resetMaxValueRaises(activePlayer,nonActivePlayer);
             updateGameStateAndPrint(GamePhase.TURN);
         } else if (gameState.getGamePhase() == GamePhase.TURN) {
-            GamePlay.resetMaxValueRaises(activePlayer,nonActivePlayer);
             updateGameStateAndPrint(GamePhase.RIVER);
         } else {
-            GamePlay.resetMaxValueRaises(activePlayer,nonActivePlayer);
             resultAtShowdown();
         }
     }
@@ -147,12 +144,12 @@ public class ActionHandler {
     }
     public void resultAtShowdown() {
         boolean isDraw = false;
-        GameResult.winningHand whoWins = equityEvaluator.updatePlayerWins(result.getBoard(), result.getHand1(), result.getHand2());
+        GameResult.PlayerWinner whoWins = equityEvaluator.updatePlayerWins(result.getBoard(), result.getHand1(), result.getHand2());
         System.out.print(whoWins + " " + gameState.getPot() + "$");
-        if (whoWins == GameResult.winningHand.DRAW) {
+        if (whoWins == GameResult.PlayerWinner.DRAW) {
             isDraw = true;
         }
-        if (whoWins == GameResult.winningHand.WIN_PLAYER1) {
+        if (whoWins == GameResult.PlayerWinner.WIN_PLAYER1) {
             updatePlayersOnShowdownResult(player1, player2, isDraw);
         } else {
             updatePlayersOnShowdownResult(player2, player1, isDraw);
