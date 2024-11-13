@@ -9,6 +9,7 @@ public class Player {
     double amountInHand;
     double previousRaise;
     double moneyOnStreet;
+
     List<Card> handPlayer;
     String name;
     public Player(double stack,double amountInHand, double previousRaise, double moneyOnStreet , List<Card> handPlayer,String name){
@@ -18,6 +19,9 @@ public class Player {
         this.previousRaise = previousRaise;
         this.moneyOnStreet = moneyOnStreet;
         this.name = name;
+    }
+    public void setStack(double amount){
+        this.stack = amount;
     }
     public void setHandPlayer(List<Card> newHand){
         this.handPlayer = newHand;

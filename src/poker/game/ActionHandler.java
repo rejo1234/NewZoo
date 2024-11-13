@@ -21,6 +21,7 @@ public class ActionHandler {
         this.equityEvaluator = equityEvaluator;
     }
 
+
     public HandleActionResult handleAction(PossibleAction lastAction, Player activePlayer, Player nonActivePlayer) {
         HandleActionResult result = new HandleActionResult();
         if (lastAction == PossibleAction.LIMP) {
@@ -48,6 +49,10 @@ public class ActionHandler {
         if (nonActivePlayer.getStackPlayer() < 100) {
             nonActivePlayer.increaseStackPlyer(100 - nonActivePlayer.getStackPlayer());
         }
+        this.result = deck.shuffleDeckAndGetHandsAndBoard();
+        this.gameState.setGamePhase(GamePhase.PREFLOP);
+        player1.setHandPlayer(result.getHand1());
+        player2.setHandPlayer(result.getHand2());
         updatePotAndStackAmount(gameState.bigBlind, nonActivePlayer);
         updatePotAndStackAmount(gameState.smallBlind, activePlayer);
         activePlayer.increasePlayermoneyOnStreet(gameState.smallBlind);
@@ -58,15 +63,11 @@ public class ActionHandler {
         for (int i = 0; i < 10; i++) {
             System.out.println();
         }
-        try {
-            Thread.sleep(4000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        this.result = deck.shuffleDeckAndGetHandsAndBoard();
-        this.gameState.setGamePhase(GamePhase.PREFLOP);
-        player1.setHandPlayer(result.getHand1());
-        player2.setHandPlayer(result.getHand2());
+//        try {
+//            Thread.sleep(4000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
     }
 
 
@@ -100,10 +101,12 @@ public class ActionHandler {
         activePlayer.increasePlayermoneyOnStreet(gameState.smallBlind);
     }
 
-
+    protected double getScannerNextInt(){
+        return GamePlayUtils.scanner.nextInt();
+    }
     public void handleRaisePlayer(Player activePlayer, Player nonActivePlayer) {
         System.out.println("Podaj do ilu, raise minimum " + Math.max(2, 2 * nonActivePlayer.getPreviousRaiseOrBet()));
-        double raise = GamePlayUtils.scanner.nextInt();
+        double raise = getScannerNextInt();
         if (raise >= activePlayer.stack) {
             raise = handleAllIn(activePlayer);
         } else {
