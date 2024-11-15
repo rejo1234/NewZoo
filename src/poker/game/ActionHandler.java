@@ -42,6 +42,10 @@ public class ActionHandler {
     }
 
     public void handleHandStart(Player activePlayer, Player nonActivePlayer){
+        this.result = deck.shuffleDeckAndGetHandsAndBoard();
+        this.gameState.setGamePhase(GamePhase.PREFLOP);
+        player1.setHandPlayer(result.getHand1());
+        player2.setHandPlayer(result.getHand2());
         if (activePlayer.getStackPlayer() < 100) {
             activePlayer.increaseStackPlyer(100 - activePlayer.getStackPlayer());
         }
@@ -58,15 +62,11 @@ public class ActionHandler {
         for (int i = 0; i < 10; i++) {
             System.out.println();
         }
-        try {
-            Thread.sleep(4000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        this.result = deck.shuffleDeckAndGetHandsAndBoard();
-        this.gameState.setGamePhase(GamePhase.PREFLOP);
-        player1.setHandPlayer(result.getHand1());
-        player2.setHandPlayer(result.getHand2());
+//        try {
+//            Thread.sleep(4000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
     }
 
 
@@ -99,11 +99,14 @@ public class ActionHandler {
         updatePotAndStackAmount(gameState.smallBlind, activePlayer);
         activePlayer.increasePlayermoneyOnStreet(gameState.smallBlind);
     }
-
+    public double scannerNextInt(){
+        GamePlayUtils.scanner.nextInt();
+        return 5;
+    }
 
     public void handleRaisePlayer(Player activePlayer, Player nonActivePlayer) {
         System.out.println("Podaj do ilu, raise minimum " + Math.max(2, 2 * nonActivePlayer.getPreviousRaiseOrBet()));
-        double raise = GamePlayUtils.scanner.nextInt();
+        double raise = scannerNextInt();
         if (raise >= activePlayer.stack) {
             raise = handleAllIn(activePlayer);
         } else {

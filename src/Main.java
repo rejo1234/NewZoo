@@ -16,7 +16,7 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args) throws IOException {
       //  startPoker();
-       // startGame();
+        startGame();
        // startConsole();
 //        startRevision();
         //starFileTutorial();
@@ -48,24 +48,24 @@ public class Main {
 //        numArray.sumRange(0, 5);
         //sprawdzić jego wyniki 22 vs AA Ak vs 9T margines błędu 0.5% na wszystkich jeśli źle liczy znaleźć inny projekt
         //jeśli liczby dobrze użyć jego kodu do znalezenie błedów w swoim ( złe przydzielanie mocy handa)
-        Pracownik pracownik = new Pracownik("Wlodek", "Zięba", 3000);
-        System.out.println("Imie " + pracownik.imie);
-        System.out.println("Nazwisko " + pracownik.nazwisko);
-        System.out.println("Wyplata " + pracownik.wyplata);
-
-        Szef szef = new Szef();
-        System.out.println("Imie " + szef.imie);
-        System.out.println("Nazwisko " + szef.nazwisko);
-        System.out.println("Wyplata " + szef.wyplata);
-        System.out.println("Premia" + szef.premia + "/n");
-        szef.imie = "Tadeusz";
-        szef.nazwisko = "Kowalski";
-        szef.wyplata = 10000;
-        szef.premia = 2000;
-        System.out.println("Imię: " + szef.imie);
-        System.out.println("Nazwisko: " + szef.nazwisko);
-        System.out.println("Wypłata: " + szef.wyplata);
-        System.out.println("Premia: " + szef.premia);
+//        Pracownik pracownik = new Pracownik("Wlodek", "Zięba", 3000);
+//        System.out.println("Imie " + pracownik.imie);
+//        System.out.println("Nazwisko " + pracownik.nazwisko);
+//        System.out.println("Wyplata " + pracownik.wyplata);
+//
+//        Szef szef = new Szef();
+//        System.out.println("Imie " + szef.imie);
+//        System.out.println("Nazwisko " + szef.nazwisko);
+//        System.out.println("Wyplata " + szef.wyplata);
+//        System.out.println("Premia" + szef.premia + "/n");
+//        szef.imie = "Tadeusz";
+//        szef.nazwisko = "Kowalski";
+//        szef.wyplata = 10000;
+//        szef.premia = 2000;
+//        System.out.println("Imię: " + szef.imie);
+//        System.out.println("Nazwisko: " + szef.nazwisko);
+//        System.out.println("Wypłata: " + szef.wyplata);
+//        System.out.println("Premia: " + szef.premia);
     }
     public static void startConsole(){
         Console myConsole = new Console();
