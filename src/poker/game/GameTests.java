@@ -3,11 +3,12 @@ package poker.game;
 import poker.Deck;
 import poker.EquityEvaluator;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class GameTests {
-    GamePlayTests mygamePlayTests;
+    GamePlayTests myGamePlayTests;
     GameTests(){
         Deck deck = new Deck();
         HandsAndBoard result = deck.shuffleDeckAndGetHandsAndBoard();
@@ -15,35 +16,47 @@ public class GameTests {
         Player player2 = new Player(100, 0, 0, 0, result.getHand2(), "player2");
         GameState gameState = new GameState(GamePhase.PREFLOP, 0);
         EquityEvaluator equityEvaluator = new EquityEvaluator(deck, result.getHand1(), result.getHand2(), result.getBoard());
-        mygamePlayTests = new GamePlayTests(gameState,result, deck, player1, player2, equityEvaluator);
+        myGamePlayTests = new GamePlayTests(gameState,result, deck, player1, player2, equityEvaluator);
     }
     public void startTests(){
         PossibleAction[][] allPossileActions = getTestScenarios();
+        List<List<Double>> allPossibleStacks = possibleStacks();
         for (int i = 0; i < allPossileActions.length; i++){
             System.out.println(i);
             PossibleAction[] possibleActions = allPossileActions[i];
-            mygamePlayTests.setNextAction(possibleActions);
-            mygamePlayTests.gameStart();
-            validate(i);
+            List<Double> currentStacks = allPossibleStacks.get(i);
+            myGamePlayTests.setNextAction(possibleActions);
+            myGamePlayTests.gameStart();
+            validate(myGamePlayTests.player1.stack, myGamePlayTests.player2.stack, currentStacks);
             prepareNextHand();
         }
     }
     public void prepareNextHand(){
-        mygamePlayTests.playerList.add(mygamePlayTests.player1);
-        mygamePlayTests.playerList.add(mygamePlayTests.player2);
-        mygamePlayTests.player1.setStack(100);
-        mygamePlayTests.player2.setStack(100);
-        mygamePlayTests.setIndexes(0);
-        mygamePlayTests.player1.setPlayerMoneyOnStreet(0);
-        mygamePlayTests.player2.setPlayerMoneyOnStreet(0);
+        myGamePlayTests.playerList.add(myGamePlayTests.player1);
+        myGamePlayTests.playerList.add(myGamePlayTests.player2);
+        myGamePlayTests.player1.setStack(100);
+        myGamePlayTests.player2.setStack(100);
+        myGamePlayTests.setIndexes(0);
+        myGamePlayTests.player1.setPlayerMoneyOnStreet(0);
+        myGamePlayTests.player2.setPlayerMoneyOnStreet(0);
     }
-    public void validate(int i){
-        if (mygamePlayTests.player1.getStackPlayer() == possibleStacks().get(i).get(1) &&
-                mygamePlayTests.player2.getStackPlayer() == possibleStacks().get(i).get(0)){
-            System.out.println("dobrze liczy");
+
+    private void validate(double stack, double stack2, List<Double> stacks) {
+        if (myGamePlayTests.gameState.gamePhase == GamePhase.PREFLOP){
+            if (stack == stacks.get(0) && stack2 == stacks.get(1)){
+                System.out.println("dobrze sprawdza");
+            }
+            else {
+                throw new Error("expected " + stacks + " otrzymałem " + stack + " " + stack2);
+            }
         }
-        else{
-            System.out.println("zle liczy");
+        else {
+            if (stack == stacks.get(1) && stack2 == stacks.get(0)){
+                System.out.println("dobrze sprawdza");
+            }
+            else {
+                throw new Error("expected " + stacks + " otrzymałem " + stack2 + " " + stack);
+            }
         }
     }
     public static PossibleAction[][] getTestScenarios() {

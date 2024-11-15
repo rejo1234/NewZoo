@@ -53,10 +53,10 @@ public class GamePlay {
                 lastAction = null;
                 activePlayer = bigBlindPlayer;
                 nonActivePlayer = smallBlindPlayer;
-                actionHandler.handleNextStreet(gameState, activePlayer, nonActivePlayer);
                 if (handleActionResult.isFold || handleActionResult.isAllIn) {
                     break;
                 }
+                actionHandler.handleNextStreet(gameState, activePlayer, nonActivePlayer);
             }
             Player temp = smallBlindPlayer;
             smallBlindPlayer = bigBlindPlayer;
