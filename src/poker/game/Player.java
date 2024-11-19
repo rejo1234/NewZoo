@@ -19,6 +19,9 @@ public class Player {
         this.moneyOnStreet = moneyOnStreet;
         this.name = name;
     }
+    public void setStack(double amount){
+        this.stack = amount;
+    }
     public void setHandPlayer(List<Card> newHand){
         this.handPlayer = newHand;
     }

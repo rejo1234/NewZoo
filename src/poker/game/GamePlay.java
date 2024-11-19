@@ -5,7 +5,6 @@ import poker.*;
 import java.util.*;
 
 public class GamePlay {
-
     public Deck deck;
     public HandsAndBoard result;
     public Player player1;
@@ -17,20 +16,19 @@ public class GamePlay {
     public ActionHandler actionHandler;
 
 
-    public GamePlay() {
-        this.deck = new Deck();
-        this.result = deck.shuffleDeckAndGetHandsAndBoard();
-        this.player1 = new Player(100, 0, 0, 0, result.getHand1(), "player1");
-        this.player2 = new Player(100, 0, 0, 0, result.getHand2(), "player2");
-        this.gameState = new GameState(GamePhase.PREFLOP, 0);
-        player1.setHandPlayer(result.getHand1());
-        player2.setHandPlayer(result.getHand2());
+    public GamePlay(GameState gameState, HandsAndBoard result, Deck deck, Player player1, Player player2, EquityEvaluator equityEvaluator) {
+        this.gameState = gameState;
+        this.result = result;
+        this.deck = deck;
+        this.player1 = player1;
+        this.player2 = player2;
+        this.equityEvaluator = equityEvaluator;
         playerList = new ArrayList<>();
         playerList.add(player1);
         playerList.add(player2);
-        this.equityEvaluator = new EquityEvaluator(deck, result.getHand1(), result.getHand2(), result.getBoard());
+        this.equityEvaluator = new EquityEvaluator(null, null, null, null);
         this.gameResult = new GameResult();
-        this.actionHandler = new ActionHandler(gameState, result, deck, player1, player2, equityEvaluator);
+        this.actionHandler = new ActionHandlerTests(gameState, result, deck, player1, player2, equityEvaluator);
     }
 
     public void gameStart() {
@@ -53,12 +51,17 @@ public class GamePlay {
                     nonActivePlayer = temp;
                 }
                 lastAction = null;
+
                 activePlayer = bigBlindPlayer;
                 nonActivePlayer = smallBlindPlayer;
-                actionHandler.handleNextStreet(gameState, activePlayer, nonActivePlayer);
                 if (handleActionResult.isFold || handleActionResult.isAllIn) {
+                    if (handleActionResult.isAllIn){
+                        gameState.setGamePhase(GamePhase.RIVER);
+                        actionHandler.handleNextStreet(gameState,activePlayer,nonActivePlayer);
+                    }
                     break;
                 }
+                actionHandler.handleNextStreet(gameState, activePlayer, nonActivePlayer);
             }
             Player temp = smallBlindPlayer;
             smallBlindPlayer = bigBlindPlayer;
