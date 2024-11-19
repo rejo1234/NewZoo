@@ -99,14 +99,14 @@ public class ActionHandler {
         updatePotAndStackAmount(gameState.smallBlind, activePlayer);
         activePlayer.increasePlayermoneyOnStreet(gameState.smallBlind);
     }
-    public double scannerNextInt(){
+    public double scannerNextRaise(){
         GamePlayUtils.scanner.nextInt();
         return 5;
     }
 
     public void handleRaisePlayer(Player activePlayer, Player nonActivePlayer) {
         System.out.println("Podaj do ilu, raise minimum " + Math.max(2, 2 * nonActivePlayer.getPreviousRaiseOrBet()));
-        double raise = scannerNextInt();
+        double raise = scannerNextRaise();
         if (raise >= activePlayer.stack) {
             raise = handleAllIn(activePlayer);
         } else {
@@ -132,9 +132,13 @@ public class ActionHandler {
         activePlayer.decreaseAmountInHand(activePlayer.getAmountInHand());
         gameState.decreasePot(gameState.pot);
     }
+    public double scannerNextBet(){
+        GamePlayUtils.scanner.nextInt();
+        return 5;
+    }
     public void handleBetPlayer(Player activePlayer) {
         System.out.println("Podaj size beta");
-        double bet = GamePlayUtils.scanner.nextDouble();
+        double bet = scannerNextBet();
         if (bet >= activePlayer.stack) {
             bet = handleAllIn(activePlayer);
             updatePotAndStackAmount(bet, player1);
