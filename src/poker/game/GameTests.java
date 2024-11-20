@@ -2,7 +2,6 @@ package poker.game;
 
 import poker.Card;
 import poker.Deck;
-import poker.DeckTests;
 import poker.EquityEvaluator;
 
 import java.util.ArrayList;
@@ -11,22 +10,15 @@ import java.util.List;
 
 public class GameTests {
     GamePlayTests myGamePlayTests;
-    GameTests(){
-        Deck deck = new DeckTests();
-        HandsAndBoard result = deck.shuffleDeckAndGetHandsAndBoard();
-        Player player1 = new Player(100, 0, 0, 0, result.getHand1(), "player1");
-        Player player2 = new Player(100, 0, 0, 0, result.getHand2(), "player2");
-        GameState gameState = new GameState(GamePhase.PREFLOP, 0);
-        EquityEvaluator equityEvaluator = new EquityEvaluator(deck, result.getHand1(), result.getHand2(), result.getBoard());
-        myGamePlayTests = new GamePlayTests(gameState,result, deck, player1, player2, equityEvaluator);
+    GameTests(EquityEvaluator equityEvaluator, Player player2, Player player1, HandsAndBoard result, Deck deck, ActionHandlerTests actionHandlerTests, GameState gameState){
+        myGamePlayTests = new GamePlayTests(actionHandlerTests, gameState, result, deck, player1, player2, equityEvaluator);
     }
     public void startTests(){
         PossibleAction[][] allPossileActions = getTestScenarios();
         List<List<Double>> allPossibleStacks = possibleStacks();
-
         for (int i = 0; i < allPossileActions.length; i++){
             System.out.println(i);
-            if (i == 14){
+            if (i == 15){
                 System.out.println("e");
             }
             PossibleAction[] possibleActions = allPossileActions[i];
@@ -70,12 +62,45 @@ public class GameTests {
         return allHandsAndBoard;
     }
 
-    public static ArrayList<Double> possibleBets(){
+    public static ArrayList<ArrayList<Double>> possibleBets(){
+        ArrayList<ArrayList<Double>> allPossibleBetsScenarios = new ArrayList<>();
         ArrayList<Double> possibleBets = new ArrayList<>();
         possibleBets.add(5.0);
-        possibleBets.add(100.0);
-        possibleBets.add(15.0);
-        return possibleBets;
+        ArrayList<Double> possibleBets2 = new ArrayList<>();
+        possibleBets2.add(5.0);
+        ArrayList<Double> possibleBets3 = new ArrayList<>();
+        possibleBets3.add(5.0);
+        ArrayList<Double> possibleBets4 = new ArrayList<>();
+        possibleBets4.add(5.0);
+        ArrayList<Double> possibleBets5 = new ArrayList<>();
+        possibleBets5.add(5.0);
+        ArrayList<Double> possibleBets6 = new ArrayList<>();
+        possibleBets6.add(5.0);
+        possibleBets6.add(10.0);
+        ArrayList<Double> possibleBets7 = new ArrayList<>();
+        possibleBets7.add(5.0);
+        possibleBets7.add(10.0);
+        possibleBets7.add(20.0);
+        ArrayList<Double> possibleBets8 = new ArrayList<>();
+        possibleBets8.add(100.0);
+        ArrayList<Double> possibleBets9 = new ArrayList<>();
+        possibleBets9.add(5.0);
+        possibleBets9.add(105.0);
+        ArrayList<Double> possibleBets10 = new ArrayList<>();
+        possibleBets10.add(5.0);
+        possibleBets10.add(20.0);
+        possibleBets10.add(105.0);
+        allPossibleBetsScenarios.add(possibleBets);
+        allPossibleBetsScenarios.add(possibleBets2);
+        allPossibleBetsScenarios.add(possibleBets3);
+        allPossibleBetsScenarios.add(possibleBets4);
+        allPossibleBetsScenarios.add(possibleBets5);
+        allPossibleBetsScenarios.add(possibleBets6);
+        allPossibleBetsScenarios.add(possibleBets7);
+        allPossibleBetsScenarios.add(possibleBets8);
+        allPossibleBetsScenarios.add(possibleBets9);
+        allPossibleBetsScenarios.add(possibleBets10);
+        return allPossibleBetsScenarios;
     }
     public static ArrayList<Double> possibleRaises(){
         ArrayList<Double> possibleRaises = new ArrayList<>();
@@ -132,7 +157,11 @@ public class GameTests {
                 {PossibleAction.RAISE,PossibleAction.CALL, PossibleAction.CHECK, PossibleAction.BET, PossibleAction.CALL,  PossibleAction.CHECK, PossibleAction.CHECK, PossibleAction.CHECK, PossibleAction.CHECK},
                 {PossibleAction.RAISE,PossibleAction.CALL, PossibleAction.CHECK, PossibleAction.BET, PossibleAction.RAISE, PossibleAction.CALL, PossibleAction.CHECK, PossibleAction.CHECK, PossibleAction.CHECK, PossibleAction.CHECK},
                 {PossibleAction.RAISE,PossibleAction.CALL, PossibleAction.CHECK, PossibleAction.BET, PossibleAction.RAISE, PossibleAction.CALL, PossibleAction.CHECK, PossibleAction.CHECK, PossibleAction.CHECK, PossibleAction.CHECK},
-                {PossibleAction.RAISE,PossibleAction.CALL, PossibleAction.CHECK, PossibleAction.BET, PossibleAction.RAISE, PossibleAction.CALL, PossibleAction.BET, PossibleAction.CALL, PossibleAction.CHECK, PossibleAction.CHECK, PossibleAction.CHECK}
+                {PossibleAction.RAISE,PossibleAction.CALL, PossibleAction.CHECK, PossibleAction.BET, PossibleAction.RAISE, PossibleAction.CALL, PossibleAction.BET, PossibleAction.CALL, PossibleAction.CHECK, PossibleAction.CHECK},
+                {PossibleAction.RAISE,PossibleAction.CALL, PossibleAction.CHECK, PossibleAction.BET, PossibleAction.RAISE, PossibleAction.CALL, PossibleAction.BET, PossibleAction.CALL, PossibleAction.BET, PossibleAction.CALL},
+                {PossibleAction.RAISE,PossibleAction.CALL, PossibleAction.BET, PossibleAction.CALL, PossibleAction.RAISE, PossibleAction.CALL, PossibleAction.BET, PossibleAction.CALL, PossibleAction.BET, PossibleAction.CALL},
+                {PossibleAction.RAISE,PossibleAction.CALL, PossibleAction.CHECK, PossibleAction.BET, PossibleAction.CALL, PossibleAction.CHECK, PossibleAction.BET, PossibleAction.CALL, PossibleAction.BET, PossibleAction.CALL},
+                {PossibleAction.RAISE,PossibleAction.CALL, PossibleAction.CHECK, PossibleAction.BET, PossibleAction.RAISE, PossibleAction.CALL, PossibleAction.BET, PossibleAction.CALL, PossibleAction.BET, PossibleAction.CALL}
         };
     }
     public static List<List<Double>> possibleStacks() {
@@ -148,10 +177,14 @@ public class GameTests {
                 List.of(94.0, 106.0),
                 List.of(90.0, 110.0),
                 List.of(120.0, 80.0),
-                List.of(90.0, 110.0),
-                List.of(115.0, 85.0),
+                List.of(110.0, 90.0),
                 List.of(85.0, 115.0),
-                List.of(200.0, 0.0)
+                List.of(115.0, 85.0),
+                List.of(75.0, 125.0),
+                List.of(145.0, 55.0),
+                List.of(0.0, 200.0),
+                List.of(200.0, 0.0),
+                List.of(0.0, 200.0)
         );
     }
 }

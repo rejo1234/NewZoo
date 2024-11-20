@@ -16,7 +16,7 @@ public class GamePlay {
     public ActionHandler actionHandler;
 
 
-    public GamePlay(GameState gameState, HandsAndBoard result, Deck deck, Player player1, Player player2, EquityEvaluator equityEvaluator) {
+    public GamePlay(ActionHandlerTests actionHandlerTests, GameState gameState, HandsAndBoard result, Deck deck, Player player1, Player player2, EquityEvaluator equityEvaluator) {
         this.gameState = gameState;
         this.result = result;
         this.deck = deck;
@@ -28,7 +28,7 @@ public class GamePlay {
         playerList.add(player2);
         this.equityEvaluator = new EquityEvaluator(null, null, null, null);
         this.gameResult = new GameResult();
-        this.actionHandler = new ActionHandlerTests(gameState, result, deck, player1, player2, equityEvaluator);
+        this.actionHandler = actionHandlerTests;
     }
 
     public void gameStart() {

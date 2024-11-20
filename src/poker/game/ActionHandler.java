@@ -40,9 +40,12 @@ public class ActionHandler {
         }
         return result;
     }
-
+        public HandsAndBoard getHandsAndBoard(){
+            HandsAndBoard handsAndBoard = deck.shuffleDeckAndGetHandsAndBoard();;
+            return handsAndBoard;
+        }
     public void handleHandStart(Player activePlayer, Player nonActivePlayer){
-        this.result = deck.shuffleDeckAndGetHandsAndBoard();
+        this.result = getHandsAndBoard();
         this.gameState.setGamePhase(GamePhase.PREFLOP);
         player1.setHandPlayer(result.getHand1());
         player2.setHandPlayer(result.getHand2());
