@@ -1,6 +1,7 @@
 package poker.game;
 
 import poker.*;
+import poker.game.tests.ActionHandlerTests;
 
 import java.util.*;
 
@@ -9,8 +10,8 @@ public class GamePlay {
     public HandsAndBoard result;
     public Player player1;
     public Player player2;
-    GameState gameState;
-    List<Player> playerList;
+    public GameState gameState;
+    public List<Player> playerList;
     public EquityEvaluator equityEvaluator;
     public GameResult gameResult;
     public ActionHandler actionHandler;

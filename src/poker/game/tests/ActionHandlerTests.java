@@ -1,12 +1,16 @@
-package poker.game;
+package poker.game.tests;
 
 import poker.Deck;
 import poker.EquityEvaluator;
+import poker.game.ActionHandler;
+import poker.game.GameState;
+import poker.game.HandsAndBoard;
+import poker.game.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ActionHandlerTests extends ActionHandler{
+public class ActionHandlerTests extends ActionHandler {
     public static int indexRaises = 0;
     public static int indexBets= 0;
     public static int indexAllScenariosBets= 0;

@@ -1,9 +1,10 @@
-package poker.game;
+package poker.game.tests;
 
 import poker.Deck;
 import poker.EquityEvaluator;
+import poker.game.*;
 
-public class GamePlayTests extends GamePlay{
+public class GamePlayTests extends GamePlay {
      PossibleAction[] possibleAction;
     int index = 0;
 

@@ -5,10 +5,10 @@ import poker.Card;
 import java.util.List;
 
 public class Player {
-    double stack;
-    double amountInHand;
-    double previousRaise;
-    double moneyOnStreet;
+    public double stack;
+    public double amountInHand;
+    public double previousRaise;
+    public double moneyOnStreet;
     List<Card> handPlayer;
     String name;
     public Player(double stack,double amountInHand, double previousRaise, double moneyOnStreet , List<Card> handPlayer,String name){

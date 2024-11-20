@@ -1,16 +1,16 @@
-package poker.game;
+package poker.game.tests;
 
 import poker.Card;
 import poker.Deck;
 import poker.EquityEvaluator;
+import poker.game.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class GameTests {
     GamePlayTests myGamePlayTests;
-    GameTests(EquityEvaluator equityEvaluator, Player player2, Player player1, HandsAndBoard result, Deck deck, ActionHandlerTests actionHandlerTests, GameState gameState){
+    public GameTests(EquityEvaluator equityEvaluator, Player player2, Player player1, HandsAndBoard result, Deck deck, ActionHandlerTests actionHandlerTests, GameState gameState){
         myGamePlayTests = new GamePlayTests(actionHandlerTests, gameState, result, deck, player1, player2, equityEvaluator);
     }
     public void startTests(){
