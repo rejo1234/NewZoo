@@ -12,7 +12,7 @@ public class Poker {
         List<Card> hand = myDeck.getHand("2h", "2s");
         List<Card> hand2 = myDeck.getHand("3d", "3s");
         String filePath = "equity_data.ser";
-        EquityEvaluator myequityEvaluator = new EquityEvaluator(myDeck, hand, hand2, board);
+        EquityEvaluator myequityEvaluator = new EquityEvaluator(myDeck, hand, hand2, board,null, null);
         myequityEvaluator.loadHashMapFromFile(filePath);
     }
 }

@@ -1,8 +1,11 @@
 package poker.game;
 
+import poker.Card;
 import poker.Deck;
 import poker.EquityEvaluator;
 import poker.GameResult;
+
+import java.util.List;
 
 
 public class ActionHandler {
@@ -70,6 +73,24 @@ public class ActionHandler {
 //        } catch (InterruptedException e) {
 //            e.printStackTrace();
 //        }
+    }
+
+    public  void handlePrintEquity(Integer i){
+        HandsAndBoard handsAndBoard = getHandsAndBoard();
+       List<Card> board = handsAndBoard.getBoard();
+       List<Card> hand1 = handsAndBoard.getHand1();
+       List<Card> hand2 = handsAndBoard.getHand2();
+        if (i == 0){
+            GamePlay.equityEvaluator.calculateEquityTest(hand1, hand2);
+        }
+        else if (i == 1){
+            List<Card> firstThreeCards = board.subList(0, 3);
+            GamePlay.equityEvaluator.calculateEquityFlop(firstThreeCards, hand1, hand2);
+        }
+        else if (i == 2){
+            List<Card> firstFourCards = board.subList(0, 4);
+            GamePlay.equityEvaluator.calculateEquityTurn(firstFourCards, hand1, hand2);
+        }
     }
 
 

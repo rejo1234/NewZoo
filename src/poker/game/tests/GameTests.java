@@ -18,7 +18,7 @@ public class GameTests {
         List<List<Double>> allPossibleStacks = possibleStacks();
         for (int i = 0; i < allPossileActions.length; i++){
             System.out.println(i);
-            if (i == 15){
+            if (i == 16){
                 System.out.println("e");
             }
             PossibleAction[] possibleActions = allPossileActions[i];
@@ -183,7 +183,7 @@ public class GameTests {
                 List.of(75.0, 125.0),
                 List.of(145.0, 55.0),
                 List.of(0.0, 200.0),
-                List.of(200.0, 0.0),
+                List.of(0.0, 200.0),
                 List.of(0.0, 200.0)
         );
     }

@@ -12,7 +12,7 @@ public class GamePlay {
     public Player player2;
     public GameState gameState;
     public List<Player> playerList;
-    public EquityEvaluator equityEvaluator;
+    public static EquityEvaluator equityEvaluator;
     public GameResult gameResult;
     public ActionHandler actionHandler;
 
@@ -23,11 +23,10 @@ public class GamePlay {
         this.deck = deck;
         this.player1 = player1;
         this.player2 = player2;
-        this.equityEvaluator = equityEvaluator;
+        GamePlay.equityEvaluator = equityEvaluator;
         playerList = new ArrayList<>();
         playerList.add(player1);
         playerList.add(player2);
-        this.equityEvaluator = new EquityEvaluator(null, null, null, null);
         this.gameResult = new GameResult();
         this.actionHandler = actionHandlerTests;
     }
@@ -52,11 +51,11 @@ public class GamePlay {
                     nonActivePlayer = temp;
                 }
                 lastAction = null;
-
                 activePlayer = bigBlindPlayer;
                 nonActivePlayer = smallBlindPlayer;
                 if (handleActionResult.isFold || handleActionResult.isAllIn) {
                     if (handleActionResult.isAllIn){
+                        actionHandler.handlePrintEquity(i);
                         gameState.setGamePhase(GamePhase.RIVER);
                         actionHandler.handleNextStreet(gameState,activePlayer,nonActivePlayer);
                     }
