@@ -15,10 +15,10 @@ public class StartGamePlay {
         EquityEvaluator equityEvaluator = new EquityEvaluator(deck, result.getHand1(), result.getHand2(), result.getBoard(), player1, player2);
         ActionHandler actionHandler = new ActionHandler(gameState, result, deck, player1, player2, equityEvaluator);
         ActionHandlerTests actionHandlerTests = new ActionHandlerTests(gameState, result, deck, player1, player2, equityEvaluator);
-        GamePlay myGamePlay = new GamePlay(actionHandlerTests, gameState,  result,  deck,  player1,  player2,  equityEvaluator);
-       // myGamePlay.gameStart();
+        GamePlay myGamePlay = new GamePlay(actionHandler, gameState,  result,  deck,  player1,  player2,  equityEvaluator);
+        myGamePlay.gameStart();
         GameTests myGameTests = new GameTests(equityEvaluator, player2, player1, result, deck, actionHandlerTests, gameState);
-        myGameTests.startTests();
+       // myGameTests.startTests();
 
     }
 }
