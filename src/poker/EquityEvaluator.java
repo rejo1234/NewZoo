@@ -5,6 +5,7 @@ import poker.game.Player;
 import java.io.*;
 import java.util.*;
 
+
 public class EquityEvaluator {
     public EquityEvaluator(Deck deck1, List<Card> hand1, List<Card> hand2, List<Card> board1, Player player11, Player player22) {
 
@@ -69,15 +70,24 @@ public class EquityEvaluator {
         equitiesPlayers.add(bothPlayers2.toString());
         return equitiesPlayers;
     }
+    private List<Double> parseEquity(String equityString) {
+        equityString = equityString.replace("[", "").replace("]", "");
+        String[] equities = equityString.split(",");
+        List<Double> equityList = new ArrayList<>();
+        for (int i = 0; i < equities.length; i++) {
+            equityList.add(Double.parseDouble(equities[i].trim()));
+        }
+        return equityList;
+    }
 
     public List<Double> calculateEquityPreFlop(List<Card> hand1, List<Card> hand2, Deck deck){
         Map<String, String> equityPlayers = loadHashMapFromFile("equity_data.ser");
         List<String> possibleHands = createPossbileKeys(hand1,hand2);
         if (equityPlayers.containsKey(possibleHands.get(0))){
-            System.out.println(equityPlayers.get(possibleHands.get(0)));
+            return parseEquity(equityPlayers.get(possibleHands.get(0)));
         }
         else if (equityPlayers.containsKey(possibleHands.get(1))){
-            System.out.println(equityPlayers.get(possibleHands.get(1)));
+            return parseEquity(equityPlayers.get(possibleHands.get(1)));
         }
         List<Card> deckWithoutHandAndBoard = new ArrayList<>(deck.cardList);
         deckWithoutHandAndBoard.removeAll(hand1);

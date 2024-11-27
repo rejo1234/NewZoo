@@ -83,18 +83,24 @@ public class ActionHandler {
     public void printEquity(GameState gameState, Player player1, Player player2, Deck deck){
         if (gameState.getGamePhase() == GamePhase.PREFLOP){
             List<Double> equityPlayersPreFlop = equityEvaluator.calculateEquityPreFlop(result.getHand1(), result.getHand2(), deck);
+            player1.setEquity(equityPlayersPreFlop.get(0));
+            player2.setEquity(equityPlayersPreFlop.get(1));
             System.out.println(player1.getNamePlayer() + player1.getHandPlayer() + equityPlayersPreFlop.get(0));
             System.out.println(player2.getNamePlayer() + player2.getHandPlayer() + equityPlayersPreFlop.get(1));
         }
         else if (gameState.getGamePhase() == GamePhase.FLOP){
             List<Card> firstThreeCards = result.getBoard().subList(0, 3);
             List<Double> equityPlayersFlop = equityEvaluator.calculateEquityFlop(firstThreeCards, result.getHand1(), result.getHand2(), deck);
+            player1.setEquity(equityPlayersFlop.get(0));
+            player2.setEquity(equityPlayersFlop.get(1));
             System.out.println(player1.getNamePlayer() + player1.getHandPlayer() + equityPlayersFlop.get(0));
             System.out.println(player2.getNamePlayer() + player2.getHandPlayer() + equityPlayersFlop.get(1));
         }
         else if (gameState.getGamePhase() == GamePhase.TURN){
             List<Card> firstFourCards = result.getBoard().subList(0, 4);
             List<Double> equityPlayersTurn = equityEvaluator.calculateEquityTurn(firstFourCards, result.getHand1(), result.getHand2(), player1, player2, deck);
+            player1.setEquity(equityPlayersTurn.get(0));
+            player2.setEquity(equityPlayersTurn.get(1));
             System.out.println(player1.getNamePlayer() + player1.getHandPlayer() + equityPlayersTurn.get(0));
             System.out.println(player2.getNamePlayer() + player2.getHandPlayer() + equityPlayersTurn.get(1));
         }

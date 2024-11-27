@@ -16,27 +16,29 @@ public class GameTests {
     public void startTests(){
         PossibleAction[][] allPossileActions = getTestScenarios();
         List<List<Double>> allPossibleStacks = possibleStacks();
+        List<List<Double>> allPossibeEquities = possibleEquities();
         for (int i = 0; i < allPossileActions.length; i++){
             System.out.println(i);
-            if (i == 17){
+            if (i == 16){
                 System.out.println("e");
             }
             PossibleAction[] possibleActions = allPossileActions[i];
             List<Double> currentStacks = allPossibleStacks.get(i);
+            List<Double> currentEquities = allPossibeEquities.get(i);
             myGamePlayTests.setNextAction(possibleActions);
             myGamePlayTests.gameStart();
-            validate(myGamePlayTests.player1.stack, myGamePlayTests.player2.stack, currentStacks);
+            validate(myGamePlayTests.player1.stack, myGamePlayTests.player2.stack, currentStacks, currentEquities, myGamePlayTests.player1.getEquity(), myGamePlayTests.player2.getEquity());
             prepareNextTest();
         }
     }
 
     public static List<HandsAndBoard> shuffleDeckAndGetHandsAndBoard(){
         List<Card> hand1 = new ArrayList<>();
-        hand1.add(new Card(14, "s"));
-        hand1.add(new Card(14, "h"));
+        hand1.add(new Card(2, "s"));
+        hand1.add(new Card(2, "h"));
         List<Card> hand2 = new ArrayList<>();
-        hand2.add(new Card(10, "s"));
-        hand2.add(new Card(10, "h"));
+        hand2.add(new Card(3, "s"));
+        hand2.add(new Card(3, "h"));
         List<Card> board = new ArrayList<>();
         board.add(new Card(2, "s"));
         board.add(new Card(3, "d"));
@@ -114,6 +116,8 @@ public class GameTests {
     public void prepareNextTest(){
         ActionHandlerTests.indexBets = 0;
         ActionHandlerTests.indexRaises = 0;
+        myGamePlayTests.player1.setEquity(0);
+        myGamePlayTests.player2.setEquity(0);
         myGamePlayTests.playerList.add(myGamePlayTests.player1);
         myGamePlayTests.playerList.add(myGamePlayTests.player2);
         myGamePlayTests.player1.setStack(100);
@@ -123,23 +127,48 @@ public class GameTests {
         myGamePlayTests.player2.setPlayerMoneyOnStreet(0);
     }
 
-    private void validate(double stack, double stack2, List<Double> stacks) {
+    private void validate(double stack, double stack2, List<Double> stacks, List<Double> equities, double equity, double equity2) {
         if (myGamePlayTests.gameState.gamePhase == GamePhase.PREFLOP){
-            if (stack == stacks.get(0) && stack2 == stacks.get(1)){
+            if (stack == stacks.get(0) && stack2 == stacks.get(1) && equity == equities.get(0) && equity2 == equities.get(1)){
                 System.out.println("dobrze sprawdza");
             }
             else {
-                throw new Error("expected " + stacks + " otrzymałem " + stack + " " + stack2);
+                throw new Error("expected " + stacks + " otrzymałem " + stack + " " + stack2 +
+                        " expected " + equities + " otrzymałem " + equity + " " + equity2);
             }
         }
         else {
-            if (stack == stacks.get(1) && stack2 == stacks.get(0)){
+            if (stack == stacks.get(1) && stack2 == stacks.get(0) && equity == equities.get(1) && equity2 == equities.get(0)){
                 System.out.println("dobrze sprawdza");
             }
             else {
-                throw new Error("expected " + stacks + " otrzymałem " + stack2 + " " + stack);
+                throw new Error("expected " + stacks + " otrzymałem " + stack2 + " " + stack +
+                        " expected " + equities + " otrzymałem " + equity2 + " " + equity);
             }
         }
+    }
+    public static List<List<Double>> possibleEquities() {
+        return List.of(
+                List.of(0.0, 0.0),
+                List.of(0.0, 0.0),
+                List.of(0.0, 0.0),
+                List.of(0.0, 0.0),
+                List.of(0.0, 0.0),
+                List.of(0.0, 0.0),
+                List.of(0.0, 0.0),
+                List.of(0.0, 0.0),
+                List.of(0.0, 0.0),
+                List.of(0.0, 0.0),
+                List.of(0.0, 0.0),
+                List.of(0.0, 0.0),
+                List.of(0.0, 0.0),
+                List.of(0.0, 0.0),
+                List.of(0.0, 0.0),
+                List.of(0.0, 0.0),
+                List.of(0.1, 0.9),
+                List.of(0.86, 0.14),
+                List.of(0.0, 0.0)
+        );
     }
     public static PossibleAction[][] getTestScenarios() {
         return new PossibleAction[][]{
@@ -178,13 +207,13 @@ public class GameTests {
                 List.of(90.0, 110.0),
                 List.of(120.0, 80.0),
                 List.of(110.0, 90.0),
-                List.of(85.0, 115.0),
                 List.of(115.0, 85.0),
-                List.of(75.0, 125.0),
+                List.of(115.0, 85.0),
+                List.of(125.0, 75.0),
                 List.of(145.0, 55.0),
-                List.of(0.0, 200.0),
                 List.of(200.0, 0.0),
-                List.of(0.0, 200.0)
+                List.of(200.0, 0.0),
+                List.of(200.0, 0.0)
         );
     }
 }

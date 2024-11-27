@@ -11,7 +11,9 @@ public class Player {
     public double moneyOnStreet;
     List<Card> handPlayer;
     String name;
-    public Player(double stack,double amountInHand, double previousRaise, double moneyOnStreet , List<Card> handPlayer,String name){
+    public double equity;
+    public Player(double equity, double stack,double amountInHand, double previousRaise, double moneyOnStreet , List<Card> handPlayer,String name){
+        this.equity = equity;
         this.stack = stack;
         this.handPlayer = handPlayer;
         this.amountInHand = amountInHand;
@@ -27,6 +29,12 @@ public class Player {
     }
     public String getNamePlayer(){
         return name;
+    }
+    public double setEquity(double amount){
+       return this.equity = amount;
+    }
+    public double getEquity(){
+        return equity;
     }
     public List<Card> getHandPlayer(){
         return handPlayer;
