@@ -1,5 +1,8 @@
 package poker.game;
 
+import poker.Card;
+
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 

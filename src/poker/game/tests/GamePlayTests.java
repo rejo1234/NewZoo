@@ -1,14 +1,15 @@
-package poker.game;
+package poker.game.tests;
 
 import poker.Deck;
 import poker.EquityEvaluator;
+import poker.game.*;
 
-public class GamePlayTests extends GamePlay{
+public class GamePlayTests extends GamePlay {
      PossibleAction[] possibleAction;
     int index = 0;
 
-    public GamePlayTests(GameState gameState, HandsAndBoard result, Deck deck, Player player1, Player player2, EquityEvaluator equityEvaluator) {
-        super(gameState, result, deck, player1, player2, equityEvaluator);
+    public GamePlayTests(ActionHandlerTests actionHandlerTests, GameState gameState, HandsAndBoard result, Deck deck, Player player1, Player player2, EquityEvaluator equityEvaluator) {
+        super(actionHandlerTests, gameState, result, deck, player1, player2, equityEvaluator);
     }
 
     public void setIndexes(int index){

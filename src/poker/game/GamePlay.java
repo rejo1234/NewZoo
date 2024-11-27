@@ -1,6 +1,7 @@
 package poker.game;
 
 import poker.*;
+import poker.game.tests.ActionHandlerTests;
 
 import java.util.*;
 
@@ -9,14 +10,14 @@ public class GamePlay {
     public HandsAndBoard result;
     public Player player1;
     public Player player2;
-    GameState gameState;
-    List<Player> playerList;
+    public GameState gameState;
+    public List<Player> playerList;
     public EquityEvaluator equityEvaluator;
     public GameResult gameResult;
     public ActionHandler actionHandler;
 
 
-    public GamePlay(GameState gameState, HandsAndBoard result, Deck deck, Player player1, Player player2, EquityEvaluator equityEvaluator) {
+    public GamePlay(ActionHandler actionHandler, GameState gameState, HandsAndBoard result, Deck deck, Player player1, Player player2, EquityEvaluator equityEvaluator) {
         this.gameState = gameState;
         this.result = result;
         this.deck = deck;
@@ -26,9 +27,8 @@ public class GamePlay {
         playerList = new ArrayList<>();
         playerList.add(player1);
         playerList.add(player2);
-        this.equityEvaluator = new EquityEvaluator(null, null, null, null);
         this.gameResult = new GameResult();
-        this.actionHandler = new ActionHandlerTests(gameState, result, deck, player1, player2, equityEvaluator);
+        this.actionHandler = actionHandler;
     }
 
     public void gameStart() {
@@ -51,14 +51,9 @@ public class GamePlay {
                     nonActivePlayer = temp;
                 }
                 lastAction = null;
-
                 activePlayer = bigBlindPlayer;
                 nonActivePlayer = smallBlindPlayer;
                 if (handleActionResult.isFold || handleActionResult.isAllIn) {
-                    if (handleActionResult.isAllIn){
-                        gameState.setGamePhase(GamePhase.RIVER);
-                        actionHandler.handleNextStreet(gameState,activePlayer,nonActivePlayer);
-                    }
                     break;
                 }
                 actionHandler.handleNextStreet(gameState, activePlayer, nonActivePlayer);
